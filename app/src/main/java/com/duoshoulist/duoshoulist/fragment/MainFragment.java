@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,17 +41,17 @@ import cn.bmob.v3.listener.FindListener;
 
 public class MainFragment extends Fragment {
 
+    final String TAG = "MainFragment";
     private static final int STATE_REFRESH = 0;// 下拉刷新
     private static final int STATE_MORE = 1;// 加载更多
+    private int limit = 10;        // 每页的数据是10条
+    private int curPage = 0;        // 当前页的编号，从0开始
+
     List<FeedItem> bankCards = new ArrayList<FeedItem>();
     SwipeRefreshLayout swipeRefreshLayout;
     UltimateRecyclerView recyclerView;
-    String TAG = "MainFragment";
-    boolean isLoadingMore;
     LinearLayoutManager mLayoutManager;
     FeedAdapter adapter;
-    private int limit = 5;        // 每页的数据是10条
-    private int curPage = 0;        // 当前页的编号，从0开始
 
     @Nullable
     @Override
@@ -83,6 +84,7 @@ public class MainFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.enableLoadmore();
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         queryData(0, STATE_REFRESH);
         adapter = new FeedAdapter(getActivity(), bankCards);

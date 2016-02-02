@@ -4,60 +4,84 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.activity.DetailActivity;
 import com.duoshoulist.duoshoulist.activity.UserProfileActivity;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.User;
 
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 
 /**
  * Created by Dan on 2016/2/1.
  */
-public class CommnentAdapter extends RecyclerView.Adapter<CommnentAdapter.ViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
+    final String TAG = "CommentAdapter";
     Context context;
     private List<Comment> commentsData;
 
-    public CommnentAdapter(Context context, List<Comment> commentsData) {
+    public CommentAdapter(Context context, List<Comment> commentsData) {
         this.commentsData = commentsData;
         this.context = context;
     }
 
+    public static interface OnRecyclerViewListener {
+        void onItemClick(int position);
+        boolean onItemLongClick(int position);
+    }
+
+    private OnRecyclerViewListener onRecyclerViewListener;
+
+    public void setOnRecyclerViewListener(OnRecyclerViewListener onRecyclerViewListener) {
+        this.onRecyclerViewListener = onRecyclerViewListener;
+    }
+
     @Override
-    public CommnentAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public CommentAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View itemLayout = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_comments, viewGroup, false);
         return new ViewHolder(itemLayout);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
         Comment comment = commentsData.get(position);
 
-        User user = new User();
-        user = user.getUser(context, comment.getUserID());
+        BmobQuery<User> query = new BmobQuery<User>();
+        query.addWhereEqualTo("objectId", comment.getUserID());
+        query.findObjects(context, new FindListener<User>() {
+            @Override
+            public void onSuccess(List<User> list) {
+                final User user;
+                user = list.get(0);
+                viewHolder.userName.setText(user.getUsername().toString());
+                String avatar = user.getUserAvatar();
+                Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
+            }
 
-        viewHolder.userName.setText(user.getUsername().toString());
+            @Override
+            public void onError(int code, String msg) {
+                Log.v(TAG, "查询用户失败：" + msg);
+
+            }
+        });
+
         viewHolder.time.setText(comment.getCreatedAt().toString());
         viewHolder.text.setText(comment.getText().toString());
-
-        String avatar = user.getUserAvatar();
-        Glide.with(holder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override

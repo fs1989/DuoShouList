@@ -17,7 +17,6 @@ public class User extends BmobUser {
 
     String userName;
     String userAvatar;
-    String password;
     User user;
 
 
@@ -37,15 +36,6 @@ public class User extends BmobUser {
         this.userAvatar = userAvatar;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public User getUser() {
         return user;
     }
@@ -57,7 +47,7 @@ public class User extends BmobUser {
     public User getUser(final Context context, String userID) {
 
         BmobQuery<User> query = new BmobQuery<User>();
-        query.addWhereEqualTo("username", "lucky");
+        query.addWhereEqualTo("objectId", userID);
         query.findObjects(context, new FindListener<User>() {
             @Override
             public void onSuccess(List<User> list) {

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
@@ -32,16 +33,38 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
+import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
+import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
+import com.duoshoulist.duoshoulist.utils.utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.GetListener;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private static final int STATE_REFRESH = 0;// 下拉刷新
+    private static final int STATE_MORE = 1;// 加载更多
+    private int limit = 10;        // 每页的数据是10条
+    private int curPage = 0;        // 当前页的编号，从0开始
 
-    RecyclerView recyclerView;
     FeedItem feedItem;
+    List<Comment> commentData = new ArrayList<Comment>();
+
+    ImageView imageView;
+    TextView textView_title;
+    TextView textView_desc;
+    Button like_count;
+    Button view_count;
+    Button share;
+
+    RecyclerView commentRecyclerView;
+    LinearLayoutManager mLayoutManager;
+    CommentAdapter commentAdapter;
 
     String objectId;
     Integer id;
@@ -56,14 +79,6 @@ public class DetailActivity extends AppCompatActivity {
     String image;
     String time;
     String createAt;
-
-    ImageView imageView;
-    TextView textView_title;
-    TextView textView_desc;
-    Button like_count;
-    Button view_count;
-    Button share;
-
 
     int screenWidth;
     int screenHight;
@@ -94,7 +109,8 @@ public class DetailActivity extends AppCompatActivity {
         initView();
         bindData();
         loadBackdrop();
-        setupComments();
+        setupRecyclerView();
+        loadComments(objectId);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,13 +121,50 @@ public class DetailActivity extends AppCompatActivity {
 //        collapsingToolbar.setTitle(feedItem.getTitle());
     }
 
-    private void setupComments() {
-        recyclerView = (RecyclerView) findViewById(R.id.detail_comment);
+    private void setupRecyclerView() {
+        commentRecyclerView = (RecyclerView) findViewById(R.id.detail_comment);
+        mLayoutManager= new LinearLayoutManager(DetailActivity.this);
+        commentRecyclerView.setLayoutManager(mLayoutManager);
 
+        commentAdapter = new CommentAdapter(DetailActivity.this, commentData);
+        commentRecyclerView.setAdapter(commentAdapter);
+        commentRecyclerView.setNestedScrollingEnabled(false);
     }
 
+    private void loadComments(String objectId) {
+
+        BmobQuery<Comment> query = new BmobQuery<Comment>();
+//查询playerName叫“比目”的数据
+        query.addWhereEqualTo("productID", objectId);
+//返回50条数据，如果不加上这条语句，默认返回10条数据
+//执行查询方法
+        query.findObjects(this, new FindListener<Comment>() {
+            @Override
+            public void onSuccess(List<Comment> comments) {
+                utils.showToast(DetailActivity.this, "获取评论成功：共"+comments.size()+"条数据。");
+                for (Comment comment : comments) {
+                    commentData.add(comment);
+                }
+                commentAdapter.notifyDataSetChanged();
+
+//                for (Comment gameScore : object) {
+//                    //获得playerName的信息
+//                    gameScore.getPlayerName();
+//                    //获得数据的objectId信息
+//                    gameScore.getObjectId();
+//                    //获得createdAt数据创建时间（注意是：createdAt，不是createAt）
+//                    gameScore.getCreatedAt();
+//                }
+            }
+            @Override
+            public void onError(int code, String msg) {
+                utils.showToast(DetailActivity.this, "获取评论失败："+msg);
+            }
+        });
+    }
 
     void getData() {
+        objectId = feedItem.getObjectId();
         id = feedItem.getId();
         likes = feedItem.getLikes();
         views = feedItem.getViews();
@@ -127,9 +180,9 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        imageView = (ImageView) findViewById(R.id.image);
-        textView_title = (TextView) findViewById(R.id.title);
-        textView_desc = (TextView) findViewById(R.id.desc);
+        imageView = (ImageView) findViewById(R.id.detail_image);
+        textView_title = (TextView) findViewById(R.id.detail_title);
+        textView_desc = (TextView) findViewById(R.id.detail_desc);
         like_count = (Button) findViewById(R.id.like_count);
         view_count = (Button) findViewById(R.id.like_count);
         share = (Button) findViewById(R.id.share_action);

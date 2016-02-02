@@ -54,9 +54,8 @@ public class MainActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout)
-
-                findViewById(R.id.drawer_layout);
+        // DrawerLayout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

@@ -22,7 +22,8 @@
     <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
+        android:layout_height="fill_parent">
+    </com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
 
 </android.support.v4.widget.SwipeRefreshLayout>
 

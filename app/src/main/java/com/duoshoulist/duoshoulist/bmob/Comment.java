@@ -7,16 +7,25 @@ import cn.bmob.v3.BmobObject;
  */
 public class Comment extends BmobObject {
 
+    private String productID;
     private String userID;
     private String text;
 
-    public Comment(String userID, String text) {
+    public Comment(String productID, String userID, String text) {
+        this.productID = productID;
         this.userID = userID;
         this.text = text;
     }
 
     public Comment() {
+    }
 
+    public String getProductID() {
+        return productID;
+    }
+
+    public void setProductID(String productID) {
+        this.productID = productID;
     }
 
     public String getUserID() {

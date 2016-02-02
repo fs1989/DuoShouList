@@ -43,17 +43,18 @@ import cn.bmob.v3.listener.FindListener;
 
 public class CheeseListFragment extends Fragment {
 
+    String TAG = "CheeseListFragment";
     private static final int STATE_REFRESH = 0;// 下拉刷新
     private static final int STATE_MORE = 1;// 加载更多
+    private int limit = 5;        // 每页的数据是10条
+    private int curPage = 0;        // 当前页的编号，从0开始
+
     List<FeedItem> bankCards = new ArrayList<FeedItem>();
     SwipeRefreshLayout swipeRefreshLayout;
     UltimateRecyclerView recyclerView;
-    String TAG = "CheeseListFragment";
-    boolean isLoadingMore;
     LinearLayoutManager mLayoutManager;
     FeedAdapter adapter;
-    private int limit = 5;        // 每页的数据是10条
-    private int curPage = 0;        // 当前页的编号，从0开始
+
 
     @Nullable
     @Override
