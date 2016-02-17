@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
@@ -18,26 +19,25 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="256dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:contentScrim="?attr/colorPrimary">
 
-            <ImageView
-                android:id="@+id/detail_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax" />
+            <!--<ImageView-->
+                <!--android:id="@+id/detail_image"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--android:fitsSystemWindows="true"-->
+                <!--app:layout_collapseMode="parallax" />-->
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -48,6 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:overScrollMode="always"
+        app:behavior_overlapTop="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -64,7 +66,7 @@
                 android:layout_marginTop="16dp">
 
                 <ImageView
-                    android:id="@+id/image"
+                    android:id="@+id/detail_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
@@ -99,7 +101,7 @@
                 android:paddingStart="@dimen/padding_normal">
 
                 <Button
-                    android:id="@+id/like_count"
+                    android:id="@+id/detail_btn_likes"
                     style="@style/Widget.Plaid.InlineActionButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -110,17 +112,17 @@
                     tools:text="33 likes" />
 
                 <Button
-                    android:id="@+id/view_count"
+                    android:id="@+id/detail_btn_comments"
                     style="@style/Widget.Plaid.InlineActionButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_views_24dp"
+                    android:drawableTop="@drawable/ic_insert_comment_black_24dp"
                     android:text="33 VIEWS"
-                    tools:text="33 views" />
+                    tools:text="33 comments" />
 
                 <Button
-                    android:id="@+id/share_action"
+                    android:id="@+id/detail_btn_share"
                     style="@style/Widget.Plaid.InlineActionButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -140,8 +142,9 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/detail_comment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
