@@ -22,31 +22,23 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.PasswordTransformationMethod;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
@@ -185,7 +177,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                             Snackbar.make(coordinatorLayout, "请先登录", Snackbar.LENGTH_LONG).setAction("登陆", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(DetailActivity.this, LoginActivity_1.class);
+                                    Intent intent = new Intent(DetailActivity.this, LoginActivity_User_Login.class);
                                     startActivity(intent);
                                 }
                             }).show();

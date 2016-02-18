@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="绑定手机号" />
+            app:title="登陆" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -27,49 +27,38 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginTop="56dp"
-        android:text="为了账户安全"/>
+        android:text="账号太多记不住？"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_margin="8dp"
-        android:text="请绑定一个手机号"/>
+        android:text="微信一键登录，更安全，更方便"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="72dp"
         android:src="@mipmap/ic_launcher"/>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp">
-
-            <AutoCompleteTextView
-                android:id="@+id/phone_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:hint="手机号"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-        </android.support.design.widget.TextInputLayout>
-
-
     <Button
-        android:id="@+id/button"
+        android:id="@+id/register_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:background="@color/colorPrimary"
-        android:text="发送验证码"/>
+        android:textColor="#FFF"
+        android:text="微信登陆"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="阅读并接受《使用条约与规范》"/>
 </LinearLayout>
