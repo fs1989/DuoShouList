@@ -23,15 +23,27 @@ import com.duoshoulist.duoshoulist.fragment.MyProfileFragment;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
+import java.util.HashMap;
+
 import cn.bmob.v3.Bmob;
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
+import cn.smssdk.gui.RegisterPage;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    //微信 SDK
+    // BMOB
+    private String bmobKey = "02c7c284a874541120575b2d2e839059";
+
+    // 微信 SDK
     private static final String APP_ID = "";
     private IWXAPI api;
+
+    // ShareSDK SMS
+    private String mobAppKey = "f87379172d4e";
+    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +51,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Bmob SDK
-        Bmob.initialize(this, "02c7c284a874541120575b2d2e839059");
+        Bmob.initialize(this, bmobKey);
+
+        // ShareSDK SMS
+        SMSSDK.initSDK(this, mobAppKey, mobAppSecret);
 
         // 微信 SDK
 
@@ -90,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(), "朋友");
         adapter.addFragment(new MainFragment(), "主页");
-        adapter.addFragment(new MyProfileFragment(), "我的");
+        adapter.addFragment(new MainFragment(), "朋友");
+//        adapter.addFragment(new MyProfileFragment(), "我的");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
     }
@@ -127,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
     private void addFlotingActionButton() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +153,23 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, LoginActivity_User_Register.class);
                 startActivity(intent);
+
+//                RegisterPage registerPage = new RegisterPage();
+//                registerPage.setRegisterCallback(new EventHandler() {
+//                    public void afterEvent(int event, int result, Object data) {
+//                        // 解析注册结果
+//                        if (result == SMSSDK.RESULT_COMPLETE) {
+//                            @SuppressWarnings("unchecked")
+//                            HashMap<String, Object> phoneMap = (HashMap<String, Object>) data;
+//                            String country = (String) phoneMap.get("country");
+//                            String phone = (String) phoneMap.get("phone");
+//
+//                            // 提交用户信息
+////                            registerUser(country, phone);
+//                        }
+//                    }
+//                });
+//                registerPage.show(MainActivity.this);
             }
         });
     }

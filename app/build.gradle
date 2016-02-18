@@ -21,6 +21,9 @@ android {
 
 repositories {
     jcenter()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -49,4 +52,8 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') {
         transitive = true
     }
+
+    // ShareSDK SMS
+    compile name:'SMSSDK-2.0.1',ext:'aar'
+    compile name:'SMSSDKGUI-2.0.1',ext:'aar'
 }

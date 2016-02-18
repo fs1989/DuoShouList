@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -23,31 +24,40 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="56dp"
-        android:text="我们已经发送了验证码到你的手机"/>
+        android:layout_height="56dp"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/verify_phone_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="8dp"
-        android:text="139********"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="我们已经发送了验证码到你的手机"/>
+
+        <TextView
+            android:id="@+id/verify_phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:text="139********"/>
+
+    </LinearLayout>
+
+
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="32dp"
         android:src="@mipmap/ic_launcher"/>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="32dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
 
@@ -64,16 +74,6 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/verify_problem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_margin="8dp"
-        android:background="@android:color/transparent"
-        android:text="收不到验证码？"/>
-
-    <Button
         android:id="@+id/verify_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,5 +82,15 @@
         android:layout_marginTop="16dp"
         android:background="@color/colorPrimary"
         android:text="登陆"/>
+
+    <Button
+        android:id="@+id/verify_problem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:text="没有收到验证码？"/>
 
 </LinearLayout>
