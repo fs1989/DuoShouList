@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,14 @@ import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.activity.DetailActivity;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
+import com.duoshoulist.duoshoulist.bmob.User;
 
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -28,11 +34,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     private final TypedValue mTypedValue = new TypedValue();
     private int mBackground;
     private List<FeedItem> mdata;
+    Context context;
 
     public FeedAdapter(Context context, List<FeedItem> items) {
         context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
         mBackground = mTypedValue.resourceId;
         mdata = items;
+        this.context = context;
     }
 
     @Override
@@ -55,7 +63,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         viewHolder.desc.setText(mdata.get(position).getDesc().toString());
 
         String image = mdata.get(position).getImage();
-        String avatar = mdata.get(position).getAvatar();
+
+        String userId = mdata.get(position).getUserId();
+
+        User user = new User(context);
+        user.getUserbyId(mdata.get(position).getUserId());
+
+
         Glide.with(holder.avatar.getContext()).load(avatar).into(viewHolder.avatar);
         Glide.with(holder.image.getContext()).load(image).crossFade().into(viewHolder.image);
 
@@ -102,4 +116,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
     }
+
+
 }

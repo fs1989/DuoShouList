@@ -53,7 +53,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.swipe_refresh_layout_profile, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.activity_profile, container, false);
         swipeRefreshLayout.post(new Runnable() {
 
             @Override

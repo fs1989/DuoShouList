@@ -1,8 +1,9 @@
 package com.duoshoulist.duoshoulist.bmob;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.duoshoulist.duoshoulist.utils.utils;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -13,51 +14,77 @@ import cn.bmob.v3.listener.FindListener;
 /**
  * Created by Dan on 2016/1/29.
  */
-public class User extends BmobUser {
+public class User extends BmobUser{
 
-    String userName;
-    String userAvatar;
+    final String TAG = "User";
+
+    String realName;
+    String nickName;
+    String avatar;
+    String sex;
+    String status;
     User user;
+    Context context;
 
-
-    public String getUserName() {
-        return userName;
+    public User(Context context) {
+        this.context = context;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getRealName() {
+        return realName;
     }
 
-    public String getUserAvatar() {
-        return userAvatar;
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
-    public void setUserAvatar(String userAvatar) {
-        this.userAvatar = userAvatar;
+    public String getNickName() {
+        return nickName;
     }
 
-    public User getUser() {
-        return user;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public User getUser(final Context context, String userID) {
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public User getUserbyId(String userId) {
 
         BmobQuery<User> query = new BmobQuery<User>();
-        query.addWhereEqualTo("objectId", userID);
+        query.addWhereEqualTo("objectId", userId);
         query.findObjects(context, new FindListener<User>() {
             @Override
             public void onSuccess(List<User> list) {
                 user = list.get(0);
             }
+
             @Override
             public void onError(int code, String msg) {
-                utils.showToast(context, "查询用户失败："+msg);
             }
         });
         return user;
     }
+
 }

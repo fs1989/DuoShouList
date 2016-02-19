@@ -116,7 +116,7 @@ public class MainFragment extends Fragment {
         BmobQuery<FeedItem> query = new BmobQuery<FeedItem>();
         query.setLimit(limit);            // 设置每页多少条数据
         query.setSkip(page * limit);        // 从第几条数据开始
-        query.order("-id");
+        query.order("-createdAt");
         query.findObjects(getActivity(), new FindListener<FeedItem>() {
 
             @Override

@@ -16,7 +16,7 @@ import com.duoshoulist.duoshoulist.R;
  */
 public class MyProfileFragment extends Fragment {
 
-//    List<FeedItem> profileData = new ArrayList<Profile>();
+//    List<FeedItem> profileData = new ArrayList<ProfileActivity>();
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -24,7 +24,7 @@ public class MyProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.swipe_refresh_layout_profile, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.activity_profile, container, false);
         return swipeRefreshLayout;
     }
 }

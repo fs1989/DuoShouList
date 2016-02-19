@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.activity.UserProfileActivity;
+import com.duoshoulist.duoshoulist.activity.ProfileActivity;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.User;
 
@@ -69,7 +69,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 final User user;
                 user = list.get(0);
                 viewHolder.userName.setText(user.getUsername().toString());
-                String avatar = user.getUserAvatar();
+                String avatar = user.getAvatar();
                 Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
             }
 
@@ -87,7 +87,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, UserProfileActivity.class);
+                Intent intent = new Intent(context, ProfileActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("userID", commentsData.get(position).getUserID());
                 intent.putExtras(bundle);
