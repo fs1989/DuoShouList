@@ -76,7 +76,7 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView = (UltimateRecyclerView) getView().findViewById(R.id.recyclerview);
+        recyclerView = (UltimateRecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
     }
 

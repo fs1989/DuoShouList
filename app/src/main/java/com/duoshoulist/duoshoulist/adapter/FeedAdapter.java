@@ -31,6 +31,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
+    private String TAG = "FeedAdapter";
+
     private final TypedValue mTypedValue = new TypedValue();
     private int mBackground;
     private List<FeedItem> mdata;
@@ -56,22 +58,41 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
         holder.objectId = mdata.get(position).getObjectId();
-        holder.id = mdata.get(position).getId();
 
         viewHolder.likes.setText(mdata.get(position).getLikes().toString());
-        viewHolder.name.setText(mdata.get(position).getName().toString());
+
         viewHolder.desc.setText(mdata.get(position).getDesc().toString());
 
         String image = mdata.get(position).getImage();
-
         String userId = mdata.get(position).getUserId();
 
-        User user = new User(context);
-        user.getUserbyId(mdata.get(position).getUserId());
+        // Load image
+        if (image != null) {
+            Glide.with(holder.image.getContext()).load(image).crossFade().into(viewHolder.image);
+        }
+
+        // Load Avatar
+        BmobQuery<User> query = new BmobQuery<User>();
+        query.addWhereEqualTo("objectId", userId);
+        query.findObjects(context, new FindListener<User>() {
+            @Override
+            public void onSuccess(List<User> list) {
+                User user = list.get(0);
+                String name = user.getNickName();
+                String avatar = user.getAvatar();
+                if (avatar != null) {
+                    viewHolder.name.setText(name);
+                    Glide.with(holder.avatar.getContext()).load(avatar).into(viewHolder.avatar);
+                }
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                Log.i(TAG, "获取user失败: " + msg);
+            }
+        });
 
 
-        Glide.with(holder.avatar.getContext()).load(avatar).into(viewHolder.avatar);
-        Glide.with(holder.image.getContext()).load(image).crossFade().into(viewHolder.image);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,8 +121,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         public final CircleImageView avatar;
         public final ImageView image;
         public String objectId;
-        public Integer id;
-
 
         public ViewHolder(View view) {
             super(view);

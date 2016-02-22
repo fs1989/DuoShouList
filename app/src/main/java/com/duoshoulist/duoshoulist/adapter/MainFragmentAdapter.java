@@ -22,6 +22,7 @@ public class MainFragmentAdapter extends FragmentPagerAdapter {
     public void addFragment(Fragment fragment, String title) {
         mFragments.add(fragment);
         mFragmentTitles.add(title);
+
     }
 
     @Override
@@ -38,4 +39,6 @@ public class MainFragmentAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return mFragmentTitles.get(position);
     }
+
+
 }

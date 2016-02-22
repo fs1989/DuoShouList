@@ -18,11 +18,13 @@ package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -34,7 +36,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -44,7 +48,7 @@ import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.duoshoulist.duoshoulist.utils.utils;
+import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.view.FullyLinearLayoutManager;
 
 import java.util.ArrayList;
@@ -53,15 +57,11 @@ import java.util.List;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.GetListener;
 import cn.bmob.v3.listener.SaveListener;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int STATE_REFRESH = 0;// 下拉刷新
-    private static final int STATE_MORE = 1;// 加载更多
-    private int limit = 10;        // 每页的数据是10条
-    private int curPage = 0;        // 当前页的编号，从0开始
+    private String TAG = "DetailActivity";
 
     FeedItem feedItem;
     List<Comment> commentData = new ArrayList<Comment>();
@@ -72,12 +72,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     TextView textView_desc;
     CoordinatorLayout coordinatorLayout;
 
-    // Buttons
+    // 3 Buttons
     Button btn_like;
     Button btn_comments;
     Button btn_share;
 
-    // RecyclerView
+    // Comment
+    ProgressBar commentProgressBar;
+    Button commentReloadButton;
+    ImageButton commentRefreshButton;
+
+    // Comment RecyclerView
     RecyclerView commentRecyclerView;
     FullyLinearLayoutManager mLayoutManager;
     CommentAdapter commentAdapter;
@@ -87,22 +92,159 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     MaterialDialog materialDialog;
     View positiveAction;
 
+    int comment_count;
+
     String objectId;
-    Integer id;
     Integer likes;
-    Integer views;
     String title;
     String brand;
     String price;
     String desc;
     String name;
-    String avatar;
     String image;
-    String time;
     String createAt;
 
     int screenWidth;
     int screenHight;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
+
+        Intent intent = getIntent();
+        feedItem = (FeedItem) intent.getSerializableExtra("feedItem");
+
+        initView();
+        getData();
+        bindData();
+        loadBackdrop();
+        loadComments(objectId);
+        setupMaterialDialog();
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initView() {
+        // Main
+        imageView = (ImageView) findViewById(R.id.detail_image);
+        textView_title = (TextView) findViewById(R.id.detail_title);
+        textView_desc = (TextView) findViewById(R.id.detail_desc);
+
+        btn_like = (Button) findViewById(R.id.detail_btn_likes);
+        btn_comments = (Button) findViewById(R.id.detail_btn_comments);
+        btn_share = (Button) findViewById(R.id.detail_btn_share);
+
+        btn_like.setOnClickListener(this);
+        btn_comments.setOnClickListener(this);
+        btn_share.setOnClickListener(this);
+
+        // Comment
+        commentRefreshButton = (ImageButton) findViewById(R.id.detail_comment_refresh);
+        commentProgressBar = (ProgressBar) findViewById(R.id.detail_comment_pb);
+        commentRefreshButton.setOnClickListener(this);
+        commentProgressBar.setVisibility(View.VISIBLE);
+
+
+        // Comment RecyclerView
+        commentRecyclerView = (RecyclerView) findViewById(R.id.detail_comment);
+        mLayoutManager = new FullyLinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
+        commentRecyclerView.setLayoutManager(mLayoutManager);
+
+        // Comment RecyclerView Adapter
+        commentAdapter = new CommentAdapter(DetailActivity.this, commentData);
+        commentRecyclerView.setAdapter(commentAdapter);
+        commentRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+
+    void getData() {
+        objectId = feedItem.getObjectId();
+        likes = feedItem.getLikes();
+        title = feedItem.getTitle();
+        brand = feedItem.getBrand();
+        price = feedItem.getPrice();
+        desc = feedItem.getDesc();
+        name = feedItem.getName();
+        image = feedItem.getImage();
+        createAt = feedItem.getCreatedAt();
+    }
+
+
+    private void bindData() {
+        textView_title.setText(title);
+        textView_desc.setText(desc);
+        btn_like.setText(likes.toString());
+    }
+
+    private void loadBackdrop() {
+        Glide.with(this).load(image).crossFade(1500).into(imageView);
+
+        screenWidth = getScreenWidth(this);
+        screenHight = getScreenHeight(this);
+
+        ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+        lp.width = screenWidth;
+        lp.height = screenWidth;
+
+        imageView.setLayoutParams(lp);
+    }
+
+    private void loadComments(String objectId) {
+        BmobQuery<Comment> query = new BmobQuery<Comment>();
+        query.addWhereEqualTo("productID", objectId);
+        query.findObjects(this, new FindListener<Comment>() {
+            @Override
+            public void onSuccess(List<Comment> comments) {
+                btn_comments.setText(comments.size() + " COMMENTS");
+                for (Comment comment : comments) {
+                    commentData.add(comment);
+                }
+                commentAdapter.notifyDataSetChanged();
+                commentProgressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                commentReloadButton = (Button) findViewById(R.id.detail_comment_reload_button);
+                commentProgressBar.setVisibility(View.GONE);
+                commentReloadButton.setOnClickListener(DetailActivity.this);
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.meun_detail, menu);
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.detail_btn_likes:
+                break;
+            case R.id.detail_btn_comments:
+                if (BmobUser.getCurrentUser(this) != null) {
+                    materialDialog.show();
+                } else {
+                    User.startLoginActivity(this);
+                }
+                break;
+            case R.id.detail_btn_share:
+                break;
+            case R.id.detail_comment_reload_button:
+                loadComments(objectId);
+                break;
+            case R.id.detail_comment_refresh:
+                loadComments(objectId);
+                break;
+        }
+    }
 
     public static int getScreenWidth(Context context) {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -118,69 +260,35 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         return display.getHeight();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
 
-        Intent intent = getIntent();
-        feedItem = (FeedItem) intent.getSerializableExtra("feedItem");
-
-        getData();
-        initView();
-        bindData();
-        loadBackdrop();
-        setupRecyclerView();
-        loadComments(objectId);
-        setupMaterialDialog();
-
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-//        collapsingToolbar.setTitleEnabled(false);
-//        collapsingToolbar.setTitle(feedItem.getTitle());
-    }
 
     private void setupMaterialDialog() {
 
         materialDialog = new MaterialDialog.Builder(this)
                 .title("评论")
-                .customView(R.layout.new_comment, true)
+                .customView(R.layout.material_dialog_detail_new_comment, true)
                 .positiveText("提交评论")
                 .negativeText(android.R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         String newComment = newCommentEditText.getText().toString();
-                        if (BmobUser.getCurrentUser(newCommentEditText.getContext()) != null) {
-                            if (newComment != null) {
-                                Comment comment = new Comment(objectId, BmobUser.getCurrentUser(DetailActivity.this).getObjectId(), newComment);
-                                comment.save(DetailActivity.this, new SaveListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Snackbar.make(coordinatorLayout, "评论成功", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                                    }
-
-                                    @Override
-                                    public void onFailure(int i, String s) {
-                                        Snackbar.make(coordinatorLayout, "评论失败，请稍后尝试", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                                    }
-                                });
-                            } else {
-                                Snackbar.make(coordinatorLayout, "请输入一些评论", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                            }
-                        } else {
-                            Snackbar.make(coordinatorLayout, "请先登录", Snackbar.LENGTH_LONG).setAction("登陆", new View.OnClickListener() {
+                        if (newComment != null) {
+                            Comment comment = new Comment(objectId, BmobUser.getCurrentUser(DetailActivity.this).getObjectId(), newComment);
+                            comment.save(DetailActivity.this, new SaveListener() {
                                 @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(DetailActivity.this, LoginActivity_User_Login.class);
-                                    startActivity(intent);
+                                public void onSuccess() {
+                                    Snackbar.make(coordinatorLayout, "评论成功", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                                 }
-                            }).show();
+
+                                @Override
+                                public void onFailure(int i, String s) {
+                                    Snackbar.make(coordinatorLayout, "评论失败，请稍后尝试", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                                }
+                            });
+                        } else {
+                            Snackbar.make(coordinatorLayout, "请输入一些评论", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         }
                     }
                 }).build();
@@ -202,141 +310,5 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
         positiveAction.setEnabled(false); // disabled by default
-    }
-
-    private void setupRecyclerView() {
-        commentRecyclerView = (RecyclerView) findViewById(R.id.detail_comment);
-        mLayoutManager = new FullyLinearLayoutManager(DetailActivity.this);
-        commentRecyclerView.setLayoutManager(mLayoutManager);
-
-        commentAdapter = new CommentAdapter(DetailActivity.this, commentData);
-        commentRecyclerView.setAdapter(commentAdapter);
-        commentRecyclerView.setNestedScrollingEnabled(false);
-    }
-
-    private void loadComments(String objectId) {
-
-        BmobQuery<Comment> query = new BmobQuery<Comment>();
-//查询playerName叫“比目”的数据
-        query.addWhereEqualTo("productID", objectId);
-//返回50条数据，如果不加上这条语句，默认返回10条数据
-//执行查询方法
-        query.findObjects(this, new FindListener<Comment>() {
-            @Override
-            public void onSuccess(List<Comment> comments) {
-                utils.showToast(DetailActivity.this, "获取评论成功：共" + comments.size() + "条数据。");
-                for (Comment comment : comments) {
-                    commentData.add(comment);
-                }
-                commentAdapter.notifyDataSetChanged();
-
-//                for (Comment gameScore : object) {
-//                    //获得playerName的信息
-//                    gameScore.getPlayerName();
-//                    //获得数据的objectId信息
-//                    gameScore.getObjectId();
-//                    //获得createdAt数据创建时间（注意是：createdAt，不是createAt）
-//                    gameScore.getCreatedAt();
-//                }
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                utils.showToast(DetailActivity.this, "获取评论失败：" + msg);
-            }
-        });
-    }
-
-    void getData() {
-        objectId = feedItem.getObjectId();
-        id = feedItem.getId();
-        likes = feedItem.getLikes();
-        views = feedItem.getViews();
-        title = feedItem.getTitle();
-        brand = feedItem.getBrand();
-        price = feedItem.getPrice();
-        desc = feedItem.getDesc();
-        name = feedItem.getName();
-        avatar = feedItem.getAvatar();
-        image = feedItem.getImage();
-        time = feedItem.getTime();
-        createAt = feedItem.getCreatedAt();
-    }
-
-    private void initView() {
-        imageView = (ImageView) findViewById(R.id.detail_image);
-        textView_title = (TextView) findViewById(R.id.detail_title);
-        textView_desc = (TextView) findViewById(R.id.detail_desc);
-        btn_like = (Button) findViewById(R.id.detail_btn_likes);
-        btn_comments = (Button) findViewById(R.id.detail_btn_comments);
-        btn_share = (Button) findViewById(R.id.detail_btn_share);
-
-        btn_like.setOnClickListener(this);
-        btn_comments.setOnClickListener(this);
-        btn_share.setOnClickListener(this);
-    }
-
-    private void bindData() {
-        textView_title.setText(title);
-        textView_desc.setText(desc);
-        btn_like.setText(likes.toString());
-        btn_comments.setText(views.toString());
-    }
-
-
-    private void loadBackdrop() {
-        Glide.with(this).load(image).crossFade(1500).into(imageView);
-
-        screenWidth = getScreenWidth(this);
-        screenHight = getScreenHeight(this);
-
-        ViewGroup.LayoutParams lp = imageView.getLayoutParams();
-        lp.width = screenWidth;
-        lp.height = screenWidth;
-//        lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        imageView.setLayoutParams(lp);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.sample_actions, menu);
-        return true;
-    }
-
-    void getDataFromInternet() {
-        BmobQuery<FeedItem> bmobQuery = new BmobQuery<FeedItem>();
-        bmobQuery.getObject(this, objectId, new GetListener<FeedItem>() {
-            @Override
-            public void onSuccess(FeedItem object) {
-                id = object.getId();
-                likes = object.getLikes();
-                title = object.getTitle();
-                desc = object.getDesc();
-                name = object.getName();
-                avatar = object.getAvatar();
-                image = object.getImage();
-                time = object.getTime();
-                createAt = object.getCreatedAt();
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                // TODO Auto-generated method stub
-//                toast("查询失败：" + msg);
-            }
-        });
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.detail_btn_likes:
-                break;
-            case R.id.detail_btn_comments:
-                materialDialog.show();
-                break;
-            case R.id.detail_btn_share:
-                break;
-        }
     }
 }

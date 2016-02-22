@@ -16,6 +16,8 @@
 
 <resources>
     <color name="window_background">#FFF5F5F5</color>
+    <color name="transparency">#00000000</color>
+    <color name="transparency9000">#9000</color>
     <color name="text_like_counter">#2b5a83</color>
 
     <color name="colorPrimary">#3F51B5</color>

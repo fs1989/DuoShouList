@@ -9,24 +9,23 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
-    <!--ShareSDK SMS-->
+    <!-- ShareSDK SMS -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="android.permission.RECEIVE_SMS" />-->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+    <!-- <uses-permission android:name="android.permission.RECEIVE_SMS" /> -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!--微信必备权限-->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-
+    <!-- 微信必备权限 -->
+    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -44,7 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.DetailActivity"
             android:parentActivityName=".activity.MainActivity">
@@ -54,8 +52,12 @@
         </activity>
 
         <activity
+            android:name=".activity.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
             android:name=".activity.LoginActivity_User_Register"
-            android:label="@string/title_activity_login"
+            android:label="@string/title_activity_register"
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.LoginActivity_User_Login"
@@ -63,20 +65,25 @@
             android:parentActivityName=".activity.LoginActivity_User_Register" />
         <activity
             android:name=".activity.LoginActivity_User_Verify"
-            android:label="@string/title_activity_login"
+            android:label="@string/title_activity_verify"
+            android:parentActivityName=".activity.LoginActivity_User_Login" />
+        <activity
+            android:name=".activity.LoginActivity_User_Success"
+            android:label="@string/title_activity_success"
             android:parentActivityName=".activity.LoginActivity_User_Login" />
 
-        <!--微信 SDK-->
-        <activity android:name=".wxapi.WXEntryActivity"
-            android:label="@string/app_name"
-            android:exported="true" />
+        <!-- 微信 SDK -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:label="@string/app_name" />
 
-        <!--Share SDK SMS-->
+        <!-- Share SDK SMS -->
         <activity
             android:name="com.mob.tools.MobUIShell"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

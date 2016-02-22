@@ -1,14 +1,14 @@
 package com.duoshoulist.duoshoulist.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,94 +16,92 @@ import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.MainFragmentAdapter;
 import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.fragment.MainFragment;
+import com.duoshoulist.duoshoulist.fragment.ProfileLikeFragment;
+import com.duoshoulist.duoshoulist.fragment.ProfileOriginalFragment;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Dan on 2016/2/1.
  */
 public class ProfileActivity extends AppCompatActivity {
 
-    private User user;
+    private String TAG = "ProfileActivity";
 
     Toolbar toolbar;
-    private ImageView avatar;
-    private TextView realName;
+    private CircleImageView avatar;
     private TextView nickName;
-    private TextView status;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        setupToolbar();
-
-        Intent intent = new Intent();
-//        user = (User) intent.getSerializableExtra("user");
-
-        user = BmobUser.getCurrentUser(this, User.class);
-
-        realName = (TextView) findViewById(R.id.profile_real_name);
         nickName = (TextView) findViewById(R.id.profile_nick_name);
-        status = (TextView) findViewById(R.id.profile_status);
-        avatar = (ImageView) findViewById(R.id.profile_avatar);
+        avatar = (CircleImageView) findViewById(R.id.profile_avatar);
 
+        setupToolbar();
         setupData();
-
     }
 
     private void setupToolbar() {
+        // Toolbar
         toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                return false;
+                switch (item.getItemId()) {
+                    case R.id.profile_logoff:
+                        User.logOut(ProfileActivity.this);   //清除缓存用户对象
+                        BmobUser user = BmobUser.getCurrentUser(ProfileActivity.this, User.class);
+                        Log.i(TAG, "user after logoff clicked:" + user);
+                        ProfileActivity.this.finish();
+                        break;
+                    case R.id.profile_setting:
+                        break;
+                }
+                return true;
             }
         });
 
+        // ViewPager
         ViewPager viewPager = (ViewPager) findViewById(R.id.profile_viewpager);
         if (viewPager != null) {
-            setupViewPager(viewPager);
+            MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager());
+            adapter.addFragment(new ProfileLikeFragment(), "喜欢");
+            adapter.addFragment(new ProfileOriginalFragment(), "原创");
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(0);
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.profile_tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(), "主页");
-        adapter.addFragment(new MainFragment(), "朋友");
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1);
-    }
 
     private void setupData() {
 
-        if (user.getRealName() != null) {
-            realName.setText(user.getRealName());
+        String userNickName = (String) BmobUser.getObjectByKey(ProfileActivity.this, "nickName");
+        String userAvatar = (String) BmobUser.getObjectByKey(ProfileActivity.this, "avatar");
+
+        if (userNickName != null) {
+            nickName.setText(userNickName);
         } else {
-            realName.setText("点击编辑你的名字");
+            nickName.setText("没有昵称");
         }
 
-        if (user.getNickName() != null) {
-            nickName.setText(user.getNickName());
-        } else {
-            nickName.setText("点击编辑你的昵称");
+        if (userAvatar != null) {
+            Glide.with(this).load(userAvatar).crossFade().into(avatar);
         }
+    }
 
-        if (user.getNickName() != null) {
-            status.setText(user.getNickName());
-        } else {
-            status.setText("点击编辑你的心情");
-        }
-
-        if (user.getAvatar() != null) {
-            Glide.with(this).load(user.getAvatar()).crossFade().into(avatar);
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.meun_profile, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

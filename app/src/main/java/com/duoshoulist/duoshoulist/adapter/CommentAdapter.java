@@ -61,16 +61,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         Comment comment = commentsData.get(position);
 
-        BmobQuery<User> query = new BmobQuery<User>();
+        BmobQuery<User> query = new BmobQuery<>();
         query.addWhereEqualTo("objectId", comment.getUserID());
         query.findObjects(context, new FindListener<User>() {
             @Override
             public void onSuccess(List<User> list) {
-                final User user;
-                user = list.get(0);
-                viewHolder.userName.setText(user.getUsername().toString());
-                String avatar = user.getAvatar();
-                Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
+                // 加载昵称
+                if (list.get(0).getNickName() != null) {
+                    viewHolder.userName.setText(list.get(0).getNickName());
+                }
+
+                // 加载头像
+                if (list.get(0).getAvatar() != null) {
+                    Glide.with(viewHolder.userAvatar.getContext()).load(list.get(0).getAvatar()).into(viewHolder.userAvatar);
+                }
             }
 
             @Override
@@ -80,12 +84,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
-        viewHolder.time.setText(comment.getCreatedAt().toString());
-        viewHolder.text.setText(comment.getText().toString());
+        viewHolder.time.setText(comment.getCreatedAt());
+        viewHolder.text.setText(comment.getText());
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ProfileActivity.class);
                 Bundle bundle = new Bundle();

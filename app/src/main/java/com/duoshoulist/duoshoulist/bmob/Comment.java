@@ -17,9 +17,6 @@ public class Comment extends BmobObject {
         this.text = text;
     }
 
-    public Comment() {
-    }
-
     public String getProductID() {
         return productID;
     }
@@ -43,5 +40,4 @@ public class Comment extends BmobObject {
     public void setText(String text) {
         this.text = text;
     }
-
 }

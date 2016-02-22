@@ -1,96 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/verify_linearlayout"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/abc_action_bar_default_height_material"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="验证码" />
-
-    </android.support.design.widget.AppBarLayout>
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/verify_linearlayout"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="我们已经发送了验证码到你的手机"/>
+            android:fitsSystemWindows="true"
+            android:minHeight="@dimen/abc_action_bar_default_height_material"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <TextView
-            android:id="@+id/verify_phone_number"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/verify_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="填写验证码" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/verify_text_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="我们已经发送了验证码到您的手机" />
+
+            <TextView
+                android:id="@+id/verify_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:text="139********" />
+
+        </LinearLayout>
+
+
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="8dp"
-            android:text="139********"/>
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/ic_launcher" />
 
-    </LinearLayout>
-
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:src="@mipmap/ic_launcher"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
-
-        <AutoCompleteTextView
-            android:id="@+id/verify_code"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/verify_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="请输入验证码"
+                android:inputType="number"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/verify_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorPrimary"
+            android:text="下一步" />
+
+        <Button
+            android:id="@+id/verify_problem"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:hint="验证码"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:singleLine="true" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <Button
-        android:id="@+id/verify_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorPrimary"
-        android:text="登陆"/>
-
-    <Button
-        android:id="@+id/verify_problem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_margin="8dp"
-        android:background="@android:color/transparent"
-        android:text="没有收到验证码？"/>
-
-</LinearLayout>
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="接收短信大概需要60秒钟" />
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

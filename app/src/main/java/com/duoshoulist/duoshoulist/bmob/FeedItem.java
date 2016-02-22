@@ -7,26 +7,15 @@ import cn.bmob.v3.BmobObject;
  */
 public class FeedItem extends BmobObject {
 
-    Integer id;
     Integer likes;
-    Integer views;
+    String name;
+    String image;
+    String desc;
     String title;
     String brand;
     String price;
-    String desc;
-    String name;
-    String avatar;
-    String image;
-    String time;
     String userId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    String url;
 
     public Integer getLikes() {
         return likes;
@@ -36,12 +25,28 @@ public class FeedItem extends BmobObject {
         this.likes = likes;
     }
 
-    public Integer getViews() {
-        return views;
+    public String getName() {
+        return name;
     }
 
-    public void setViews(Integer views) {
-        this.views = views;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public String getTitle() {
@@ -68,51 +73,19 @@ public class FeedItem extends BmobObject {
         this.price = price;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public String getUserId() {
         return userId;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

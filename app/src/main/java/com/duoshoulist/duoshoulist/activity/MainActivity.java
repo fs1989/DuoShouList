@@ -1,6 +1,7 @@
 package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,25 +13,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.MainFragmentAdapter;
+import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.fragment.MainFragment;
-import com.duoshoulist.duoshoulist.fragment.MyProfileFragment;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import java.util.HashMap;
-
 import cn.bmob.v3.Bmob;
-import cn.smssdk.EventHandler;
+import cn.bmob.v3.BmobUser;
 import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String TAG = "MainActivity";
 
     private DrawerLayout mDrawerLayout;
 
@@ -82,11 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         // ViewPager
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        if (viewPager != null)
-
-        {
+        if (viewPager != null) {
             setupViewPager(viewPager);
-
         }
 
         // Tab Layout
@@ -94,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         addFlotingActionButton();
-
     }
 
     private void regToWx() {
@@ -106,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new MainFragment(), "主页");
-        adapter.addFragment(new MainFragment(), "朋友");
+        adapter.addFragment(new MainFragment(), "原创");
 //        adapter.addFragment(new MyProfileFragment(), "我的");
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -124,10 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.sample_actions, menu);
+        getMenuInflater().inflate(R.menu.meun_main, menu);
         return true;
     }
 
@@ -136,12 +132,23 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
+                break;
+            case R.id.main_profile:
+                User user = BmobUser.getCurrentUser(this, User.class);
+                Log.i(TAG, "user = " + user);
+                if (user != null) {
+                    Intent intent = new Intent(this, ProfileActivity.class);
+                    startActivity(intent);
+                } else {
+                    User.startLoginActivity(this);
+                }
+
+                break;
+            case R.id.main_settings:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     private void addFlotingActionButton() {
@@ -151,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                Intent intent = new Intent(MainActivity.this, LoginActivity_User_Register.class);
+                Intent intent = new Intent(MainActivity.this, LoginActivity_User_Login.class);
                 startActivity(intent);
 
 //                RegisterPage registerPage = new RegisterPage();
