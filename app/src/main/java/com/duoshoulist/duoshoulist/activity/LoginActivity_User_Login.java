@@ -1,5 +1,6 @@
 package com.duoshoulist.duoshoulist.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,16 +43,15 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
         loginActivity_User_Login = this;
-
+        // Toolbar
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
+        // Views
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.login_phone_number);
         button = (Button) findViewById(R.id.login_next);
         register = (TextView) findViewById(R.id.login_register);
-
+        //Button
         button.setOnClickListener(this);
         register.setOnClickListener(this);
     }
@@ -81,8 +81,20 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
     }
 
     private void login() {
-        User user = new User();
-        user.sendVerifyCode(LoginActivity_User_Login.this, phoneNumber, "LOGIN");
+        sendVerifyCode(LoginActivity_User_Login.this, phoneNumber, "LOGIN");
+    }
+
+
+    public void sendVerifyCode(Context context, String phoneNumber, String loginType) {
+        Intent intent = new Intent();
+        intent.setClass(context, LoginActivity_User_Verify.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("phoneNumber", phoneNumber);
+        bundle.putSerializable("loginType", loginType);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+        //发送验证码
+//        SMSSDK.getVerificationCode("86", phoneNumber);
     }
 
 

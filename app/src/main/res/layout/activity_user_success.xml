@@ -7,7 +7,6 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/verify_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -24,36 +23,55 @@
                 android:id="@+id/verify_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:title="登陆成功" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </android.support.design.widget.AppBarLayout>
+    </LinearLayout>
+
+    <org.buraktamturk.loadingview.LoadingView
+        android:id="@+id/success_loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="72dp"
+        app:lv_loading="false">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="56dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/success_text_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center" />
+
+            </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_avatar"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:padding="16dp"
+                android:layout_marginTop="16dp"
                 android:src="@drawable/ic_account_circle_black_24dp" />
 
             <ListView
                 android:id="@+id/success_list_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"></ListView>
+                android:layout_height="128dp"
+                android:layout_marginTop="16dp"
+                android:footerDividersEnabled="true"
+                android:headerDividersEnabled="true">
+
+            </ListView>
 
             <Button
                 android:id="@+id/success_button"
@@ -65,5 +83,5 @@
                 android:background="@color/colorPrimary"
                 android:text="完成" />
         </LinearLayout>
-    </LinearLayout>
+    </org.buraktamturk.loadingview.LoadingView>
 </android.support.design.widget.CoordinatorLayout>

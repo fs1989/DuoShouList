@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // ViewPager
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         if (viewPager != null) {
             setupViewPager(viewPager);
         }

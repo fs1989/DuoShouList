@@ -1,5 +1,7 @@
 package com.duoshoulist.duoshoulist.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +10,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.utils.utils;
+
+import org.buraktamturk.loadingview.LoadingView;
 
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
@@ -93,7 +98,6 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         }
     }
 
-
     private EventHandler eh;
     private void setupLoginListener() {
         eh = new EventHandler() {
@@ -114,7 +118,6 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
                     ((Throwable) data).printStackTrace();
                     utils.hideKeyboard(LoginActivity_User_Verify.this, autoCompleteTextView);
                     Snackbar.make(autoCompleteTextView, data.toString(), Snackbar.LENGTH_LONG).show();
-                    login();
                     Log.i(TAG, "错误信息: " + ((Throwable) data).getMessage());
                 }
             }
@@ -123,8 +126,12 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     }
 
     private void login() {
-        User user = new User();
-        user.mylogin(LoginActivity_User_Verify.this, loginType, phoneNumber);
+        Intent intent = new Intent(this, LoginActivity_User_Success.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("phoneNumber", phoneNumber);
+        bundle.putSerializable("loginType", loginType);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
 }

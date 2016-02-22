@@ -1,5 +1,6 @@
 package com.duoshoulist.duoshoulist.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -64,8 +65,7 @@ public class LoginActivity_User_Register extends AppCompatActivity implements Vi
             case R.id.register_button:
                 String phoneNumber = autoCompleteTextView.getText().toString();
                 if (utils.isMobile(phoneNumber)) {
-                    User user = new User();
-                    user.sendVerifyCode(LoginActivity_User_Register.this, phoneNumber, "REGISTER");
+                    sendVerifyCode(LoginActivity_User_Register.this, phoneNumber, "REGISTER");
                 } else {
                     utils.hideKeyboard(this, autoCompleteTextView);
                     Snackbar.make(autoCompleteTextView, "请输入正确的手机号码", Snackbar.LENGTH_LONG).show();
@@ -77,5 +77,17 @@ public class LoginActivity_User_Register extends AppCompatActivity implements Vi
                 startActivity(intent);
                 break;
         }
+    }
+
+    public void sendVerifyCode(Context context, String phoneNumber, String loginType) {
+        Intent intent = new Intent();
+        intent.setClass(context, LoginActivity_User_Verify.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("phoneNumber", phoneNumber);
+        bundle.putSerializable("loginType", loginType);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+        //发送验证码
+//        SMSSDK.getVerificationCode("86", phoneNumber);
     }
 }

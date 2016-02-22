@@ -56,4 +56,7 @@ dependencies {
     // ShareSDK SMS
     compile name:'SMSSDK-2.0.1',ext:'aar'
     compile name:'SMSSDKGUI-2.0.1',ext:'aar'
+
+    // Loading View
+    compile 'org.buraktamturk:loadingview:1.0.0@aar'
 }
