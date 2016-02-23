@@ -3,6 +3,7 @@ package com.duoshoulist.duoshoulist.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     final String TAG = "CommentAdapter";
     Context context;
     private List<Comment> commentsData;
+    private Handler handler = new Handler();
 
     public CommentAdapter(Context context, List<Comment> commentsData) {
         this.commentsData = commentsData;
@@ -59,33 +61,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
-        Comment comment = commentsData.get(position);
+        final Comment comment = commentsData.get(position);
 
-        BmobQuery<User> query = new BmobQuery<>();
-        query.addWhereEqualTo("objectId", comment.getUserID());
-        query.findObjects(context, new FindListener<User>() {
-            @Override
-            public void onSuccess(List<User> list) {
-                // 加载昵称
-                if (list.get(0).getNickName() != null) {
-                    viewHolder.userName.setText(list.get(0).getNickName());
-                }
-
-                // 加载头像
-                if (list.get(0).getAvatar() != null) {
-                    Glide.with(viewHolder.userAvatar.getContext()).load(list.get(0).getAvatar()).into(viewHolder.userAvatar);
-                }
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                Log.v(TAG, "查询用户失败：" + msg);
-
-            }
-        });
 
         viewHolder.time.setText(comment.getCreatedAt());
         viewHolder.text.setText(comment.getText());
+
+        String nickName = comment.getNickName();
+        String avatar = comment.getAvatar();
+
+        viewHolder.userName.setText(nickName);
+        Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +92,32 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public int getItemCount() {
         return commentsData.size();
     }
+
+    void loadData(final ViewHolder viewHolder, Comment comment) {
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("objectId", comment.getUserID());
+        query.findObjects(context, new FindListener<User>() {
+            @Override
+            public void onSuccess(List<User> list) {
+                // 加载昵称
+                if (list.get(0).getNickName() != null) {
+//                    viewHolder.userName.setText(list.get(0).getNickName());
+                }
+
+                // 加载头像
+                if (list.get(0).getAvatar() != null) {
+//                    Glide.with(viewHolder.userAvatar.getContext()).load(list.get(0).getAvatar()).into(viewHolder.userAvatar);
+                }
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                Log.v(TAG, "查询用户失败：" + msg);
+
+            }
+        });
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 

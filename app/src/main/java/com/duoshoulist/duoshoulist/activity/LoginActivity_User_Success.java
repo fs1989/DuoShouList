@@ -2,13 +2,15 @@ package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.User;
@@ -17,8 +19,11 @@ import org.buraktamturk.loadingview.LoadingView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -31,16 +36,19 @@ public class LoginActivity_User_Success extends AppCompatActivity {
     private String TAG = "LoginActivity_User_Success";
     public static LoginActivity_User_Success loginActivity_user_success = null;
 
-    private TextView textIndicator;
-    private ListView listView;
-    private Button button;
-    SimpleAdapter simpleAdapter;
-
-    ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
-    HashMap<String, String> phoneMap = new HashMap<String, String>();
-    HashMap<String, String> nameMap = new HashMap<String, String>();
+    private String phoneNumber;
 
     private LoadingView loadingView;
+    private Toolbar toolbar;
+    private Button button;
+    private ListView listView;
+    SimpleAdapter simpleAdapter;
+
+    private ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+    private HashMap<String, String> phoneMap = new HashMap<String, String>();
+    private HashMap<String, String> nameMap = new HashMap<String, String>();
+
+    android.os.Handler myHandler = new android.os.Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,29 +56,20 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         setContentView(R.layout.activity_user_success);
         loginActivity_user_success = this;
 
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.success_toolbar);
+        toolbar.setTitle("登陆中");
+        setSupportActionBar(toolbar);
 
-        textIndicator = (TextView) findViewById(R.id.success_text_indicator);
+        // View
         loadingView = (LoadingView) findViewById(R.id.success_loadingView);
         listView = (ListView) findViewById(R.id.success_list_view);
         button = (Button) findViewById(R.id.success_button);
 
-        String phoneNumber = (String) getIntent().getSerializableExtra("phoneNumber");
-        String loginType = (String) getIntent().getSerializableExtra("loginType");
+        phoneNumber = (String) getIntent().getSerializableExtra("phoneNumber");
 
-        switch (loginType) {
-            case "LOGIN":
-                setTitle("登陆中");
-                textIndicator.setText("欢迎回来");
-                loadingView.setText("登陆中");
-                break;
-            case "REGISTER":
-                setTitle("注册中");
-                textIndicator.setText("注册成功");
-                loadingView.setText("注册中");
-                break;
-        }
-
-        mylogin(this, loginType, phoneNumber);
+        setupListView();
+        checkUser();
 
         loadingView.setLoading(true);
         button.setOnClickListener(new View.OnClickListener() {
@@ -79,8 +78,6 @@ public class LoginActivity_User_Success extends AppCompatActivity {
                 finish();
             }
         });
-
-        setupListView();
 
     }
 
@@ -111,27 +108,43 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         mylist.add(phoneMap);
         mylist.add(nameMap);
 
-        Log.i(TAG, phoneNumber.toString());
-        Log.i(TAG, nickName.toString());
+        Log.i(TAG, "phoneNumber: " + phoneNumber);
+        Log.i(TAG, "nickName: " + nickName);
         Log.i(TAG, mylist.toString());
 
-        simpleAdapter.notifyDataSetChanged();
+        toolbar.setTitle("登陆成功");
         loadingView.setLoading(false);
     }
 
+    private void checkUser() {
+        BmobQuery<BmobUser> query = new BmobQuery<BmobUser>();
+        query.addWhereEqualTo("username", phoneNumber);
+        query.findObjects(this, new FindListener<BmobUser>() {
+            @Override
+            public void onSuccess(List<BmobUser> object) {
+                int result = object.size();
+                Log.i(TAG, "是否查询到用户，Result的大小为" + result);
+                switch (result) {
+                    case 1:
+                        Log.i(TAG, "开始登陆" + phoneNumber);
+                        bmobLogin(LoginActivity_User_Success.this, phoneNumber);
+                        break;
+                    case 0:
+                        Log.i(TAG, "开始注册" + phoneNumber);
+                        bmobRegister(LoginActivity_User_Success.this, phoneNumber);
+                        break;
+                }
+            }
 
-    public void mylogin(Context context, String loginTye, String phoneNumber) {
-        switch (loginTye) {
-            case "REGISTER":
-                bmobRegister(context, phoneNumber);
-                break;
-            case "LOGIN":
-                bmobLogin(context, phoneNumber);
-                break;
-        }
+            @Override
+            public void onError(int code, String msg) {
+                // TODO Auto-generated method stub
+                Log.i(TAG, "查询用户是否存在失败：" + msg);
+            }
+        });
     }
 
-    private void bmobLogin(Context context, String phoneNumber) {
+    private void bmobLogin(Context context, final String phoneNumber) {
 
         BmobUser bmobUser = new BmobUser();
         bmobUser.setUsername(phoneNumber);
@@ -139,13 +152,15 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         bmobUser.login(context, new SaveListener() {
             @Override
             public void onSuccess() {
-                Log.i(TAG, "BMOB登陆成功");
+                Snackbar.make(loadingView, "自动登陆成功", Snackbar.LENGTH_LONG).show();
+                Log.i(TAG, "BMOB登陆成功" + phoneNumber);
                 setupData();
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                Log.i(TAG, "BMOB登录失败");
+                Log.i(TAG, "BMOB登录失败" + phoneNumber);
+                Log.i(TAG, msg);
             }
         });
     }
@@ -158,16 +173,26 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         user.signUp(context, new SaveListener() {
             @Override
             public void onSuccess() {
-                Log.i(TAG, "BMOB注册成功");
+                Log.i(TAG, "BMOB注册成功" + phoneNumber);
                 bmobLogin(context, phoneNumber);
             }
 
             @Override
             public void onFailure(int code, String msg) {
                 Log.i(TAG, "BMOB注册失败" + msg);
+                Log.i(TAG, "ErrorCode: " + code);
             }
         });
     }
 
+    class MyThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            Message msg = new Message();
+            msg.what = 1;
+            myHandler.sendMessage(msg);
 
+        }
+    }
 }

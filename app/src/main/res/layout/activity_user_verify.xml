@@ -36,10 +36,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/verify_text_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textSize="16sp"
                     android:text="我们已经发送了验证码到您的手机" />
 
                 <TextView
@@ -48,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:gravity="center"
+                    android:textSize="16sp"
                     android:text="139********" />
 
             </LinearLayout>

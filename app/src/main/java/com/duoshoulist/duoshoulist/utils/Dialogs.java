@@ -8,7 +8,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Login;
-import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Register;
 import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Success;
 import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Verify;
 
@@ -29,9 +28,6 @@ public class Dialogs {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (LoginActivity_User_Register.loginActivity_user_register != null) {
-                            LoginActivity_User_Register.loginActivity_user_register.finish();
-                        }
                         if (LoginActivity_User_Login.loginActivity_User_Login != null) {
                             LoginActivity_User_Login.loginActivity_User_Login.finish();
                         }

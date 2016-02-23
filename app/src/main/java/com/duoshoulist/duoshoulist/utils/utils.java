@@ -1,17 +1,8 @@
 package com.duoshoulist.duoshoulist.utils;
 
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
-import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Register;
-import com.duoshoulist.duoshoulist.activity.LoginActivity_User_Verify;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

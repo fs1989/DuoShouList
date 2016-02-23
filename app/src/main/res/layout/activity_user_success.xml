@@ -20,10 +20,10 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/verify_toolbar"
+                android:id="@+id/success_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         </android.support.design.widget.AppBarLayout>
     </LinearLayout>
@@ -53,13 +53,15 @@
                     android:id="@+id/success_text_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:text="欢迎"/>
 
             </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:layout_marginTop="16dp"
                 android:src="@drawable/ic_account_circle_black_24dp" />
 

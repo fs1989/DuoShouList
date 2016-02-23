@@ -18,8 +18,8 @@ package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -29,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
@@ -63,13 +64,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private String TAG = "DetailActivity";
 
+    private Handler handler = new Handler();
+
     FeedItem feedItem;
     List<Comment> commentData = new ArrayList<Comment>();
+    int commentCount;
 
     // 图 标题 描述
     ImageView imageView;
     TextView textView_title;
     TextView textView_desc;
+    TextView textView_comment;
     CoordinatorLayout coordinatorLayout;
 
     // 3 Buttons
@@ -79,7 +84,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     // Comment
     ProgressBar commentProgressBar;
-    Button commentReloadButton;
     ImageButton commentRefreshButton;
 
     // Comment RecyclerView
@@ -121,12 +125,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         getData();
         bindData();
         loadBackdrop();
-        loadComments(objectId);
         setupMaterialDialog();
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        new Thread() {
+            @Override
+            public void run() {
+                loadComments(objectId);
+            }
+        }.start();
     }
 
     private void initView() {
@@ -134,6 +144,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         imageView = (ImageView) findViewById(R.id.detail_image);
         textView_title = (TextView) findViewById(R.id.detail_title);
         textView_desc = (TextView) findViewById(R.id.detail_desc);
+        textView_comment = (TextView) findViewById(R.id.detail_textView_comment);
 
         btn_like = (Button) findViewById(R.id.detail_btn_likes);
         btn_comments = (Button) findViewById(R.id.detail_btn_comments);
@@ -195,26 +206,54 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void loadComments(String objectId) {
+        commentProgressBar.setVisibility(View.VISIBLE);
+        commentData.clear();
+        commentAdapter.notifyDataSetChanged();
         BmobQuery<Comment> query = new BmobQuery<Comment>();
         query.addWhereEqualTo("productID", objectId);
         query.findObjects(this, new FindListener<Comment>() {
             @Override
             public void onSuccess(List<Comment> comments) {
                 btn_comments.setText(comments.size() + " COMMENTS");
+                commentCount = comments.size();
                 for (Comment comment : comments) {
-                    commentData.add(comment);
+                    updateUser(DetailActivity.this, comment, comment.getUserID());
                 }
-                commentAdapter.notifyDataSetChanged();
                 commentProgressBar.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onError(int code, String msg) {
-                commentReloadButton = (Button) findViewById(R.id.detail_comment_reload_button);
                 commentProgressBar.setVisibility(View.GONE);
-                commentReloadButton.setOnClickListener(DetailActivity.this);
+                textView_comment.setText("评论加载失败");
             }
         });
+    }
+
+    public void updateUser(Context context, final Comment comment, String userID) {
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("objectId", userID);
+        query.findObjects(context, new FindListener<User>() {
+            @Override
+            public void onSuccess(List<User> list) {
+                User user = list.get(0);
+                comment.setUser(user);
+                comment.setNickName(user.getNickName());
+                comment.setAvatar(user.getAvatar());
+                commentData.add(comment);
+                commentAdapter.notifyDataSetChanged();
+                Log.i(TAG, "更新成功" + comment.getObjectId());
+                Log.i(TAG, "更新成功Adapter已经更新");
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                Log.v(TAG, "查询用户失败：" + msg);
+
+            }
+        });
+
     }
 
     @Override
@@ -237,9 +276,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.detail_btn_share:
                 break;
-            case R.id.detail_comment_reload_button:
-                loadComments(objectId);
-                break;
             case R.id.detail_comment_refresh:
                 loadComments(objectId);
                 break;
@@ -259,8 +295,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Display display = manager.getDefaultDisplay();
         return display.getHeight();
     }
-
-
 
 
     private void setupMaterialDialog() {

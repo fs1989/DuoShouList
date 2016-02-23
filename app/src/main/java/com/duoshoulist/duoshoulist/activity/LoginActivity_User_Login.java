@@ -43,6 +43,7 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
         loginActivity_User_Login = this;
+
         // Toolbar
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,17 +51,10 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
         // Views
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.login_phone_number);
         button = (Button) findViewById(R.id.login_next);
-        register = (TextView) findViewById(R.id.login_register);
-        //Button
         button.setOnClickListener(this);
-        register.setOnClickListener(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
+
 
 
     private void setupMaterialDialog(String phoneNumber) {
@@ -74,23 +68,17 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        login();
+                        sendVerifyCode(LoginActivity_User_Login.this, LoginActivity_User_Login.this.phoneNumber);
                     }
                 }).build();
         positiveAction = materialDialog.getActionButton(DialogAction.POSITIVE);
     }
 
-    private void login() {
-        sendVerifyCode(LoginActivity_User_Login.this, phoneNumber, "LOGIN");
-    }
-
-
-    public void sendVerifyCode(Context context, String phoneNumber, String loginType) {
+    public void sendVerifyCode(Context context, String phoneNumber) {
         Intent intent = new Intent();
         intent.setClass(context, LoginActivity_User_Verify.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("phoneNumber", phoneNumber);
-        bundle.putSerializable("loginType", loginType);
         intent.putExtras(bundle);
         context.startActivity(intent);
         //发送验证码
@@ -111,11 +99,17 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
                     Snackbar.make(autoCompleteTextView, "请输入正确的手机号码", Snackbar.LENGTH_LONG).show();
                 }
                 break;
-            case R.id.login_register:
-                Intent intent2 = new Intent();
-                intent2.setClass(LoginActivity_User_Login.this, LoginActivity_User_Register.class);
-                startActivity(intent2);
-                break;
+//            case R.id.login_register:
+//                Intent intent2 = new Intent();
+//                intent2.setClass(LoginActivity_User_Login.this, LoginActivity_User_Register.class);
+//                startActivity(intent2);
+//                break;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 }

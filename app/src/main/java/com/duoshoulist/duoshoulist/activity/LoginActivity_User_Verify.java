@@ -32,15 +32,12 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     private String TAG = "LoginActivity_User_Verify";
     public static LoginActivity_User_Verify loginActivity_user_verify = null;
 
-    private TextView textIndicator;
     private TextView textViewPhoneNumber;
     private AutoCompleteTextView autoCompleteTextView;
     private Button problem;
     private Button button;
 
     private String phoneNumber;
-    private String loginType;
-    private String verifyCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +46,6 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         loginActivity_user_verify = this;
 
         phoneNumber = (String) getIntent().getSerializableExtra("phoneNumber");
-        loginType = (String) getIntent().getSerializableExtra("loginType");
 
         // Toolbar
         final Toolbar toolbar = (Toolbar) findViewById(R.id.verify_toolbar);
@@ -57,7 +53,6 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // View
-        textIndicator = (TextView) findViewById(R.id.verify_text_indicator);
         textViewPhoneNumber = (TextView) findViewById(R.id.verify_phone_number);
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.verify_code);
         button = (Button) findViewById(R.id.verify_button);
@@ -69,26 +64,11 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         setupLoginListener();
     }
 
-    private void problem() {
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SMSSDK.unregisterEventHandler(eh); //注册短信回调
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.verify_button:
-                verifyCode = autoCompleteTextView.getText().toString();
+                String verifyCode = autoCompleteTextView.getText().toString();
 //                SMSSDK.submitVerificationCode("86", phoneNumber, verifyCode);
                 login();
                 break;
@@ -129,9 +109,23 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         Intent intent = new Intent(this, LoginActivity_User_Success.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("phoneNumber", phoneNumber);
-        bundle.putSerializable("loginType", loginType);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    private void problem() {
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SMSSDK.unregisterEventHandler(eh); //注册短信回调
     }
 
 }

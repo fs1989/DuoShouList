@@ -32,7 +32,8 @@
             android:layout_height="56dp"
             android:layout_marginTop="32dp"
             android:gravity="center"
-            android:text="请输入手机号码" />
+            android:textSize="16sp"
+            android:text="免注册，输入手机号码，直接登陆" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -71,12 +72,11 @@
             android:text="下一步" />
 
         <TextView
-            android:id="@+id/login_register"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="56dp"
             android:gravity="center"
-            android:text="还没有账户? 点击注册。" />
+            android:text="阅读并接受《使用条约与规范》" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
