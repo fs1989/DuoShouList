@@ -16,20 +16,23 @@
 
 package com.duoshoulist.duoshoulist.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.FeedAdapter;
+import com.duoshoulist.duoshoulist.adapter.FeedProfileAdapter;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
@@ -42,32 +45,33 @@ import cn.bmob.v3.listener.FindListener;
 public class ProfileOriginalFragment extends Fragment {
 
     final String TAG = "MainFragment";
+
     private static final int STATE_REFRESH = 0;// 下拉刷新
     private static final int STATE_MORE = 1;// 加载更多
     private int limit = 10;        // 每页的数据是10条
     private int curPage = 0;        // 当前页的编号，从0开始
 
-    List<FeedItem> bankCards = new ArrayList<FeedItem>();
+    private static List<FeedItem> bankCards = new ArrayList<FeedItem>();
     SwipeRefreshLayout swipeRefreshLayout;
     UltimateRecyclerView recyclerView;
-    LinearLayoutManager mLayoutManager;
-    FeedAdapter adapter;
+    GridLayoutManager gridLayoutManager;
+    FeedProfileAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.swipe_refresh_layout_main, container, false);
         swipeRefreshLayout.post(new Runnable() {
-
             @Override
             public void run() {
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        queryData(0, STATE_REFRESH);
+                        Log.i(TAG, "onRefresh方法执行了，开始获取数据");
+                    }
+                });
                 swipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
             }
         });
         return swipeRefreshLayout;
@@ -78,17 +82,39 @@ public class ProfileOriginalFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         recyclerView = (UltimateRecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
+        checkLaunchTime();
+    }
+
+    private void checkLaunchTime() {
+        // 启动次数
+        SharedPreferences preferences = getContext().getSharedPreferences("launchCount", getContext().MODE_PRIVATE);
+        int count = preferences.getInt("launchCount", 0);
+
+        //判断程序与第几次运行，如果是第一次运行则跳转到引导页面
+        if (count == 0) {
+//            Intent intent = new Intent();
+//            intent.setClass(getApplicationContext(), LaunchGuideViewActivity.class);
+//            startActivity(intent);
+            swipeRefreshLayout.setRefreshing(true);
+            Log.i(TAG, "第一次运行程序");
+        }
+        SharedPreferences.Editor editor = preferences.edit();
+        //存入数据
+        editor.putInt("launchCount", ++count);
+        //提交修改
+        editor.commit();
+        Log.i(TAG, "第N次运行程序, N = " + count);
+        queryData(0, STATE_REFRESH);
     }
 
     private void setupRecyclerView(UltimateRecyclerView recyclerView) {
-        mLayoutManager = new LinearLayoutManager(recyclerView.getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
+        gridLayoutManager = new GridLayoutManager(recyclerView.getContext(), 3);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.enableLoadmore();
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        queryData(0, STATE_REFRESH);
-        adapter = new FeedAdapter(getActivity(), bankCards);
-
+//        queryData(0, STATE_REFRESH);
+        adapter = new FeedProfileAdapter(getActivity(), bankCards);
         recyclerView.setAdapter(adapter);
 
         // Load More
@@ -100,17 +126,13 @@ public class ProfileOriginalFragment extends Fragment {
         });
     }
 
-    private void refreshData() {
-        queryData(0, STATE_REFRESH);
-    }
-
     private void loadPage() {
         swipeRefreshLayout.setRefreshing(true);
         queryData(curPage, STATE_MORE);
-
     }
 
     private void queryData(final int page, final int actionType) {
+        swipeRefreshLayout.setRefreshing(true);
         Log.i("bmob", "pageN:" + page + " limit:" + limit + " actionType:" + actionType);
 
         BmobQuery<FeedItem> query = new BmobQuery<FeedItem>();
@@ -121,7 +143,6 @@ public class ProfileOriginalFragment extends Fragment {
 
             @Override
             public void onSuccess(List<FeedItem> feedItems) {
-                // TODO Auto-generated method stub
 
                 if (feedItems.size() > 0) {
                     if (actionType == STATE_REFRESH) {
@@ -129,35 +150,28 @@ public class ProfileOriginalFragment extends Fragment {
                         curPage = 0;
                         bankCards.clear();
                     }
-
                     // 将本次查询的数据添加到bankCards中
                     for (FeedItem feedItem : feedItems) {
                         bankCards.add(feedItem);
                     }
                     adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
                     // 这里在每次加载完数据后，将当前页码+1，这样在上拉刷新的onPullUpToRefresh方法中就不需要操作curPage了
                     curPage++;
-                    showToast("第" + (page + 1) + "页数据加载完成");
+                    Snackbar.make(getView(), "第" + (page + 1) + "页数据加载完成", Snackbar.LENGTH_LONG);
                 } else if (actionType == STATE_MORE) {
-                    showToast("没有更多数据了");
+                    Snackbar.make(getView(), "没有更多数据了", Snackbar.LENGTH_LONG);
                 } else if (actionType == STATE_REFRESH) {
-                    showToast("没有数据");
+                    Snackbar.make(getView(), "没有新数据", Snackbar.LENGTH_LONG);
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onError(int arg0, String arg1) {
-                // TODO Auto-generated method stub
                 Log.i(TAG, "查询失败:" + arg1);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    private void showToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
 }

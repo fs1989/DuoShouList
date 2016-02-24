@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.User;
 
@@ -25,6 +26,7 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Dan on 2016-01-31.
@@ -40,6 +42,7 @@ public class LoginActivity_User_Success extends AppCompatActivity {
 
     private LoadingView loadingView;
     private Toolbar toolbar;
+    private CircleImageView avatar;
     private Button button;
     private ListView listView;
     SimpleAdapter simpleAdapter;
@@ -64,6 +67,7 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         // View
         loadingView = (LoadingView) findViewById(R.id.success_loadingView);
         listView = (ListView) findViewById(R.id.success_list_view);
+        avatar = (CircleImageView) findViewById(R.id.success_avatar);
         button = (Button) findViewById(R.id.success_button);
 
         phoneNumber = (String) getIntent().getSerializableExtra("phoneNumber");
@@ -96,10 +100,9 @@ public class LoginActivity_User_Success extends AppCompatActivity {
 
     private void setupData() {
         User currentUser = BmobUser.getCurrentUser(this, User.class);
-        String phone = "手机号码";
         String phoneNumber = currentUser.getUsername();
-        String name = "昵称";
         String nickName = currentUser.getNickName();
+        String avatarAddress = currentUser.getAvatar();
 
         phoneMap.put("title", "手机号码");
         phoneMap.put("value", phoneNumber);
@@ -111,6 +114,10 @@ public class LoginActivity_User_Success extends AppCompatActivity {
         Log.i(TAG, "phoneNumber: " + phoneNumber);
         Log.i(TAG, "nickName: " + nickName);
         Log.i(TAG, mylist.toString());
+
+        if (avatar != null) {
+            Glide.with(this).load(avatarAddress).crossFade().into(avatar);
+        }
 
         toolbar.setTitle("登陆成功");
         loadingView.setLoading(false);
@@ -155,14 +162,25 @@ public class LoginActivity_User_Success extends AppCompatActivity {
                 Snackbar.make(loadingView, "自动登陆成功", Snackbar.LENGTH_LONG).show();
                 Log.i(TAG, "BMOB登陆成功" + phoneNumber);
                 setupData();
+                close();
             }
 
             @Override
             public void onFailure(int code, String msg) {
                 Log.i(TAG, "BMOB登录失败" + phoneNumber);
                 Log.i(TAG, msg);
+                finish();
             }
         });
+    }
+
+    private void close() {
+        if (LoginActivity_User_Login.class != null) {
+            LoginActivity_User_Login.loginActivity_User_Login.finish();
+        }
+        if (LoginActivity_User_Verify.class != null) {
+            LoginActivity_User_Verify.loginActivity_user_verify.finish();
+        }
     }
 
     private void bmobRegister(final Context context, final String phoneNumber) {

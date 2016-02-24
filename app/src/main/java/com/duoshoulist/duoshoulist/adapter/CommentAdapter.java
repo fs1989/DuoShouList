@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,14 @@ import com.duoshoulist.duoshoulist.activity.ProfileActivity;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,6 +47,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     public static interface OnRecyclerViewListener {
         void onItemClick(int position);
+
         boolean onItemLongClick(int position);
     }
 
@@ -62,10 +69,49 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
         final Comment comment = commentsData.get(position);
-
-
-        viewHolder.time.setText(comment.getCreatedAt());
         viewHolder.text.setText(comment.getText());
+
+        int min = 60000; // 分钟
+        int hour = min * 60; // 小时
+        int day = hour * 24; // 天
+        int month = day * 30; // 月
+        int year = month * 12; // 年
+
+        Long currentTime = System.currentTimeMillis();
+        String commentTime = comment.getCreatedAt();
+        Long unixTime = (currentTime - BmobDate.getTimeStamp(commentTime));
+        Long timeCondition = unixTime / 3600000;
+//        Log.i(TAG, "unixTime " + unixTime.toString() + " timeCondition " + timeCondition.toString() +" " + comment.getText());
+        if (timeCondition < 1) {
+            int rate = min;
+            Long time = unixTime / rate;
+            int finalTime = Integer.parseInt(time.toString());
+            viewHolder.time.setText(finalTime + "分钟前");
+        } else if (timeCondition >= 1 && timeCondition < 60) {
+            int rate = hour;
+            Long time = unixTime / rate;
+            int finalTime = Integer.parseInt(time.toString());
+            viewHolder.time.setText(finalTime + "小时前");
+        } else if (timeCondition >= 60 && timeCondition < 60 * 24 * 30) {
+            int rate = day;
+            Long time = unixTime / rate;
+            int finalTime = Integer.parseInt(time.toString());
+            viewHolder.time.setText(finalTime + "天前");
+        } else if (timeCondition >= 60 * 24 * 30 && timeCondition < 60 * 24 * 30 * 12) {
+            int rate = month;
+            Long time = unixTime / rate;
+            int finalTime = Integer.parseInt(time.toString());
+            viewHolder.time.setText(finalTime + "月前");
+        } else if (timeCondition >= 60 * 24 * 30 * 12) {
+            int rate = year;
+            Long time = unixTime / rate;
+            int finalTime = Integer.parseInt(time.toString());
+            viewHolder.time.setText(finalTime + "年前");
+        } else {
+            viewHolder.time.setText("N久以前");
+        }
+
+
 
         String nickName = comment.getNickName();
         String avatar = comment.getAvatar();
@@ -96,6 +142,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     void loadData(final ViewHolder viewHolder, Comment comment) {
         BmobQuery<User> query = new BmobQuery<>();
         query.addWhereEqualTo("objectId", comment.getUserID());
+        query.order("-createdAt");
         query.findObjects(context, new FindListener<User>() {
             @Override
             public void onSuccess(List<User> list) {

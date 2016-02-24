@@ -18,6 +18,8 @@ import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.utils.utils;
 
+import cn.smssdk.SMSSDK;
+
 
 /**
  * Created by Dan on 2016-01-31.
@@ -57,6 +59,27 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
 
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.login_next:
+                phoneNumber = autoCompleteTextView.getText().toString();
+                if (utils.isMobile(phoneNumber)) {
+                    setupMaterialDialog(phoneNumber);
+                    materialDialog.show();
+                } else {
+                    utils.hideKeyboard(this, autoCompleteTextView);
+                    Snackbar.make(autoCompleteTextView, "请输入正确的手机号码", Snackbar.LENGTH_LONG).show();
+                }
+                break;
+//            case R.id.login_register:
+//                Intent intent2 = new Intent();
+//                intent2.setClass(LoginActivity_User_Login.this, LoginActivity_User_Register.class);
+//                startActivity(intent2);
+//                break;
+        }
+    }
+
     private void setupMaterialDialog(String phoneNumber) {
         String text = "我们将发送验证码短信到这个号码：\r\n" + phoneNumber;
         materialDialog = new MaterialDialog.Builder(this)
@@ -82,34 +105,12 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
         intent.putExtras(bundle);
         context.startActivity(intent);
         //发送验证码
-//        SMSSDK.getVerificationCode("86", phoneNumber);
+        SMSSDK.getVerificationCode("86", phoneNumber);
     }
 
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login_next:
-                phoneNumber = autoCompleteTextView.getText().toString();
-                if (utils.isMobile(phoneNumber)) {
-                    setupMaterialDialog(phoneNumber);
-                    materialDialog.show();
-                } else {
-                    utils.hideKeyboard(this, autoCompleteTextView);
-                    Snackbar.make(autoCompleteTextView, "请输入正确的手机号码", Snackbar.LENGTH_LONG).show();
-                }
-                break;
-//            case R.id.login_register:
-//                Intent intent2 = new Intent();
-//                intent2.setClass(LoginActivity_User_Login.this, LoginActivity_User_Register.class);
-//                startActivity(intent2);
-//                break;
-        }
-    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
     }
 }

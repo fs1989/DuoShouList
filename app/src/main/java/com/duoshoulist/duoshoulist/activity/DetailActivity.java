@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.OrientationHelper;
@@ -75,6 +76,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     TextView textView_title;
     TextView textView_desc;
     TextView textView_comment;
+    FloatingActionButton floatingActionButton;
     CoordinatorLayout coordinatorLayout;
 
     // 3 Buttons
@@ -116,20 +118,25 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
-
         Intent intent = getIntent();
         feedItem = (FeedItem) intent.getSerializableExtra("feedItem");
 
-        initView();
-        getData();
-        bindData();
-        loadBackdrop();
-        setupMaterialDialog();
-
+        // Toolbar
         final Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.detail_fab);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
+
+        initView();
+        getData();
+        loadBackdrop();
+        setupMaterialDialog();
+
+        textView_title.setText(title);
+        textView_desc.setText(desc);
+        btn_like.setText(likes.toString());
 
         new Thread() {
             @Override
@@ -187,9 +194,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void bindData() {
-        textView_title.setText(title);
-        textView_desc.setText(desc);
-        btn_like.setText(likes.toString());
+
     }
 
     private void loadBackdrop() {
@@ -209,18 +214,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         commentProgressBar.setVisibility(View.VISIBLE);
         commentData.clear();
         commentAdapter.notifyDataSetChanged();
+
         BmobQuery<Comment> query = new BmobQuery<Comment>();
         query.addWhereEqualTo("productID", objectId);
+        query.order("createdAt");
         query.findObjects(this, new FindListener<Comment>() {
             @Override
             public void onSuccess(List<Comment> comments) {
                 btn_comments.setText(comments.size() + " COMMENTS");
                 commentCount = comments.size();
+                int location = 0;
                 for (Comment comment : comments) {
-                    updateUser(DetailActivity.this, comment, comment.getUserID());
+                    updateUser(DetailActivity.this, location, comment, comment.getUserID());
+                    commentData.add(comment);
+                    location++;
                 }
-                commentProgressBar.setVisibility(View.GONE);
-
             }
 
             @Override
@@ -228,10 +236,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 commentProgressBar.setVisibility(View.GONE);
                 textView_comment.setText("评论加载失败");
             }
+
+            @Override
+            public void onFinish() {
+                commentProgressBar.setVisibility(View.GONE);
+
+            }
         });
     }
 
-    public void updateUser(Context context, final Comment comment, String userID) {
+    public void updateUser(Context context, final int location, final Comment comment, String userID) {
         BmobQuery<User> query = new BmobQuery<>();
         query.addWhereEqualTo("objectId", userID);
         query.findObjects(context, new FindListener<User>() {
@@ -241,10 +255,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 comment.setUser(user);
                 comment.setNickName(user.getNickName());
                 comment.setAvatar(user.getAvatar());
-                commentData.add(comment);
+                commentData.set(location, comment);
                 commentAdapter.notifyDataSetChanged();
-                Log.i(TAG, "更新成功" + comment.getObjectId());
-                Log.i(TAG, "更新成功Adapter已经更新");
             }
 
             @Override
@@ -252,6 +264,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 Log.v(TAG, "查询用户失败：" + msg);
 
             }
+
+
         });
 
     }

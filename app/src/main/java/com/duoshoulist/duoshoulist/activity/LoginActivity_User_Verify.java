@@ -3,6 +3,7 @@ package com.duoshoulist.duoshoulist.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,8 +37,11 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     private AutoCompleteTextView autoCompleteTextView;
     private Button problem;
     private Button button;
+    private LoadingView loadingView;
 
     private String phoneNumber;
+
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         button.setOnClickListener(this);
         problem.setOnClickListener(this);
         textViewPhoneNumber.setText(phoneNumber);
+        loadingView = (LoadingView) findViewById(R.id.verify_loadingView);
+        loadingView.setLoading(false);
 
         setupLoginListener();
     }
@@ -69,8 +75,9 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.verify_button:
                 String verifyCode = autoCompleteTextView.getText().toString();
-//                SMSSDK.submitVerificationCode("86", phoneNumber, verifyCode);
-                login();
+                SMSSDK.submitVerificationCode("86", phoneNumber, verifyCode);
+                loadingView.setLoading(true);
+                loadingView.setText("验证中");
                 break;
             case R.id.verify_problem:
                 problem();
@@ -82,22 +89,45 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     private void setupLoginListener() {
         eh = new EventHandler() {
             @Override
-            public void afterEvent(int event, int result, Object data) {
+            public void afterEvent(int event, int result, final Object data) {
 
                 if (result == SMSSDK.RESULT_COMPLETE) {
                     //回调完成
-                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                        //验证码验证成功
+                    boolean smart = (Boolean)data;
+                    if(smart) {
+                        //通过智能验证
                         login();
-                    } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                        //发送验证码成功
-                    } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
-                        //返回支持发送验证码的国家列表
+                    } else {
+                        //依然走短信验证
+                        if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                            //验证码验证成功
+                            Log.i(TAG, "验证成功");
+                            Snackbar.make(loadingView, "智能验证，即将登陆", Snackbar.LENGTH_LONG);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    login();
+                                }
+                            }, 2000);
+
+                        } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+                            //发送验证码成功
+                            Log.i(TAG, "验证码发送请求成功");
+                        } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
+                            //返回支持发送验证码的国家列表
+                        }
                     }
+
                 } else {
                     ((Throwable) data).printStackTrace();
                     utils.hideKeyboard(LoginActivity_User_Verify.this, autoCompleteTextView);
-                    Snackbar.make(autoCompleteTextView, data.toString(), Snackbar.LENGTH_LONG).show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadingView.setLoading(false);
+                            Snackbar.make(autoCompleteTextView, data.toString(), Snackbar.LENGTH_LONG).show();
+                        }
+                    }, 2000);
                     Log.i(TAG, "错误信息: " + ((Throwable) data).getMessage());
                 }
             }
@@ -114,12 +144,6 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     }
 
     private void problem() {
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
     }
 
     @Override

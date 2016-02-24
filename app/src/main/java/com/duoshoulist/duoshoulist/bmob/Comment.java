@@ -64,7 +64,6 @@ public class Comment extends BmobObject {
     }
 
     public String getAvatar() {
-        user.getAvatar();
         return avatar;
     }
 
@@ -73,7 +72,6 @@ public class Comment extends BmobObject {
     }
 
     public String getNickName() {
-        user.getNickName();
         return nickName;
     }
 

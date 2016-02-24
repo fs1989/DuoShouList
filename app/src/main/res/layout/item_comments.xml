@@ -31,7 +31,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        tools:text="3 hours ago" />
+        android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/comment_userName"

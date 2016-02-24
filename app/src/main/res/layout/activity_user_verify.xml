@@ -28,6 +28,17 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <org.buraktamturk.loadingview.LoadingView
+            android:id="@+id/verify_loadingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,6 +109,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:text="接收短信大概需要60秒钟" />
-
+        </LinearLayout>
+        </org.buraktamturk.loadingview.LoadingView>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
