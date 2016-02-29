@@ -18,12 +18,14 @@ package com.duoshoulist.duoshoulist.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,6 @@ import android.view.ViewGroup;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.FeedAdapter;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,15 +50,19 @@ public class MainFragment extends Fragment {
     private int limit = 10;        // 每页的数据是10条
     private int curPage = 0;        // 当前页的编号，从0开始
 
-    private static List<FeedItem> bankCards = new ArrayList<FeedItem>();
+    private static List<FeedItem> feedItemList = new ArrayList<FeedItem>();
     SwipeRefreshLayout swipeRefreshLayout;
-    UltimateRecyclerView recyclerView;
+    RecyclerView recyclerView;
     LinearLayoutManager mLayoutManager;
     FeedAdapter adapter;
+    boolean isLoadingMore;
+
+    Handler handler = new Handler();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.swipe_refresh_layout_main, container, false);
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -72,13 +77,14 @@ public class MainFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(true);
             }
         });
+
         return swipeRefreshLayout;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView = (UltimateRecyclerView) getView().findViewById(R.id.main_recycler_view);
+        recyclerView = (RecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
         checkLaunchTime();
     }
@@ -105,21 +111,25 @@ public class MainFragment extends Fragment {
         queryData(0, STATE_REFRESH);
     }
 
-    private void setupRecyclerView(UltimateRecyclerView recyclerView) {
+    private void setupRecyclerView(RecyclerView recyclerView) {
         mLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.enableLoadmore();
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 //        queryData(0, STATE_REFRESH);
-        adapter = new FeedAdapter(getActivity(), bankCards);
+        adapter = new FeedAdapter(getActivity(), feedItemList);
         recyclerView.setAdapter(adapter);
 
-        // Load More
-        recyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
-                loadPage();
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!recyclerView.canScrollVertically(1)) {
+                    Log.i(TAG, "loadPage方法执行了");
+                    if (!isLoadingMore) {
+                        loadPage();
+                    }
+                }
             }
         });
     }
@@ -131,6 +141,7 @@ public class MainFragment extends Fragment {
 
     private void queryData(final int page, final int actionType) {
         swipeRefreshLayout.setRefreshing(true);
+        isLoadingMore = true;
         Log.i("bmob", "pageN:" + page + " limit:" + limit + " actionType:" + actionType);
 
         BmobQuery<FeedItem> query = new BmobQuery<FeedItem>();
@@ -142,34 +153,42 @@ public class MainFragment extends Fragment {
             @Override
             public void onSuccess(List<FeedItem> feedItems) {
 
+                Log.i(TAG, "feedItems的大小: " + feedItems.size());
                 if (feedItems.size() > 0) {
                     if (actionType == STATE_REFRESH) {
                         // 当是下拉刷新操作时，将当前页的编号重置为0，并把bankCards清空，重新添加
                         curPage = 0;
-                        bankCards.clear();
+                        feedItemList.clear();
+                    }
+
+                    for (FeedItem feedItem : feedItems) {
+                        feedItemList.add(feedItem);
                     }
                     // 将本次查询的数据添加到bankCards中
-                    for (FeedItem feedItem : feedItems) {
-                        bankCards.add(feedItem);
-                    }
+
                     adapter.notifyDataSetChanged();
                     // 这里在每次加载完数据后，将当前页码+1，这样在上拉刷新的onPullUpToRefresh方法中就不需要操作curPage了
                     curPage++;
-                    Snackbar.make(getView(), "第" + (page + 1) + "页数据加载完成", Snackbar.LENGTH_LONG);
+                    Snackbar.make(getView(), "第" + (page + 1) + "页数据加载完成", Snackbar.LENGTH_LONG).show();
                 } else if (actionType == STATE_MORE) {
-                    Snackbar.make(getView(), "没有更多数据了", Snackbar.LENGTH_LONG);
+                    Log.i(TAG, "没有更多数据了");
+                    Snackbar.make(swipeRefreshLayout, "没有更多数据了", Snackbar.LENGTH_LONG).show();
                 } else if (actionType == STATE_REFRESH) {
-                    Snackbar.make(getView(), "没有新数据", Snackbar.LENGTH_LONG);
+                    Log.i(TAG, "没有新数据");
+                    Snackbar.make(swipeRefreshLayout, "没有新数据", Snackbar.LENGTH_LONG).show();
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                isLoadingMore = false;
             }
 
             @Override
             public void onError(int arg0, String arg1) {
                 Log.i(TAG, "查询失败:" + arg1);
                 swipeRefreshLayout.setRefreshing(false);
+                isLoadingMore = false;
             }
         });
     }
+
 
 }

@@ -1,7 +1,6 @@
 package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -158,25 +157,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                Intent intent = new Intent(MainActivity.this, LoginActivity_User_Login.class);
+                Intent intent = new Intent(MainActivity.this, PostActivityOne.class);
                 startActivity(intent);
-
-//                RegisterPage registerPage = new RegisterPage();
-//                registerPage.setRegisterCallback(new EventHandler() {
-//                    public void afterEvent(int event, int result, Object data) {
-//                        // 解析注册结果
-//                        if (result == SMSSDK.RESULT_COMPLETE) {
-//                            @SuppressWarnings("unchecked")
-//                            HashMap<String, Object> phoneMap = (HashMap<String, Object>) data;
-//                            String country = (String) phoneMap.get("country");
-//                            String phone = (String) phoneMap.get("phone");
-//
-//                            // 提交用户信息
-////                            registerUser(country, phone);
-//                        }
-//                    }
-//                });
-//                registerPage.show(MainActivity.this);
             }
         });
     }

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.utils.utils;
 
 import cn.smssdk.SMSSDK;
@@ -26,10 +25,10 @@ import cn.smssdk.SMSSDK;
  */
 
 
-public class LoginActivity_User_Login extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
-    private String TAG = "LoginActivity_User_Login";
-    public static LoginActivity_User_Login loginActivity_User_Login = null;
+    private String TAG = "LoginActivityLogin";
+    public static LoginActivityLogin loginActivity_User_Login = null;
 
     private AutoCompleteTextView autoCompleteTextView;
     private Button button;
@@ -74,7 +73,7 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
                 break;
 //            case R.id.login_register:
 //                Intent intent2 = new Intent();
-//                intent2.setClass(LoginActivity_User_Login.this, LoginActivity_User_Register.class);
+//                intent2.setClass(LoginActivityLogin.this, LoginActivity_User_Register.class);
 //                startActivity(intent2);
 //                break;
         }
@@ -91,7 +90,7 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        sendVerifyCode(LoginActivity_User_Login.this, LoginActivity_User_Login.this.phoneNumber);
+                        sendVerifyCode(LoginActivityLogin.this, LoginActivityLogin.this.phoneNumber);
                     }
                 }).build();
         positiveAction = materialDialog.getActionButton(DialogAction.POSITIVE);
@@ -99,7 +98,7 @@ public class LoginActivity_User_Login extends AppCompatActivity implements View.
 
     public void sendVerifyCode(Context context, String phoneNumber) {
         Intent intent = new Intent();
-        intent.setClass(context, LoginActivity_User_Verify.class);
+        intent.setClass(context, LoginActivityVerify.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("phoneNumber", phoneNumber);
         intent.putExtras(bundle);

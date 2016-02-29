@@ -51,34 +51,34 @@
                 android:value=".activity.MainActivity" />
         </activity>
 
+
         <activity
             android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".activity.LoginActivity_User_Login"
+            android:name=".activity.LoginActivityLogin"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".activity.LoginActivity_User_Verify"
+            android:name=".activity.LoginActivityVerify"
             android:label="@string/title_activity_verify"
-            android:parentActivityName=".activity.LoginActivity_User_Login" />
+            android:parentActivityName=".activity.LoginActivityLogin" />
         <activity
-            android:name=".activity.LoginActivity_User_Success"
+            android:name=".activity.LoginActivitySuccess"
             android:label="@string/title_activity_success"
-            android:parentActivityName=".activity.LoginActivity_User_Login" />
+            android:parentActivityName=".activity.LoginActivityLogin" />
 
-        <!-- 微信 SDK -->
-        <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:exported="true"
-            android:label="@string/app_name" />
 
-        <!-- Share SDK SMS -->
         <activity
-            android:name="com.mob.tools.MobUIShell"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:name=".activity.PostActivityOne"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity"/>
+        <activity
+            android:name=".activity.PostActivityLink"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity"/>
+
+
     </application>
 
 </manifest>

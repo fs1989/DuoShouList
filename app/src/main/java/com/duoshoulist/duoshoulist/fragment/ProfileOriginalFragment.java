@@ -23,8 +23,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +32,7 @@ import android.view.ViewGroup;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.FeedAdapter;
-import com.duoshoulist.duoshoulist.adapter.FeedProfileAdapter;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +51,9 @@ public class ProfileOriginalFragment extends Fragment {
 
     private static List<FeedItem> bankCards = new ArrayList<FeedItem>();
     SwipeRefreshLayout swipeRefreshLayout;
-    UltimateRecyclerView recyclerView;
-    GridLayoutManager gridLayoutManager;
-    FeedProfileAdapter adapter;
+    RecyclerView recyclerView;
+    LinearLayoutManager mLayoutManager;
+    FeedAdapter adapter;
 
     @Nullable
     @Override
@@ -80,7 +78,7 @@ public class ProfileOriginalFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView = (UltimateRecyclerView) getView().findViewById(R.id.main_recycler_view);
+        recyclerView = (RecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
         checkLaunchTime();
     }
@@ -107,23 +105,14 @@ public class ProfileOriginalFragment extends Fragment {
         queryData(0, STATE_REFRESH);
     }
 
-    private void setupRecyclerView(UltimateRecyclerView recyclerView) {
-        gridLayoutManager = new GridLayoutManager(recyclerView.getContext(), 3);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.enableLoadmore();
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        mLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 //        queryData(0, STATE_REFRESH);
-        adapter = new FeedProfileAdapter(getActivity(), bankCards);
+        adapter = new FeedAdapter(getActivity(), bankCards);
         recyclerView.setAdapter(adapter);
-
-        // Load More
-        recyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
-            @Override
-            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
-                loadPage();
-            }
-        });
     }
 
     private void loadPage() {

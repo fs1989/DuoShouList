@@ -25,6 +25,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,7 +52,6 @@ import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
 import com.duoshoulist.duoshoulist.bmob.User;
-import com.duoshoulist.duoshoulist.view.FullyLinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     // Comment RecyclerView
     RecyclerView commentRecyclerView;
-    FullyLinearLayoutManager mLayoutManager;
+    LinearLayoutManager mLayoutManager;
     CommentAdapter commentAdapter;
 
     // MaterialDialog
@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         // Comment RecyclerView
         commentRecyclerView = (RecyclerView) findViewById(R.id.detail_comment);
-        mLayoutManager = new FullyLinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
+        mLayoutManager = new LinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
         commentRecyclerView.setLayoutManager(mLayoutManager);
 
         // Comment RecyclerView Adapter

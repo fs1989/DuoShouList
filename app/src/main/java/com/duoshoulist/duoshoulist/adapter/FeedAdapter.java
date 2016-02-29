@@ -32,7 +32,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     private String TAG = "FeedAdapter";
-
     private final TypedValue mTypedValue = new TypedValue();
     private int mBackground;
     private List<FeedItem> mdata;
@@ -135,6 +134,5 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
     }
-
 
 }

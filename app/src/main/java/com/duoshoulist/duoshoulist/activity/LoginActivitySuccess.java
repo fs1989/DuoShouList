@@ -33,10 +33,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 
-public class LoginActivity_User_Success extends AppCompatActivity {
+public class LoginActivitySuccess extends AppCompatActivity {
 
-    private String TAG = "LoginActivity_User_Success";
-    public static LoginActivity_User_Success loginActivity_user_success = null;
+    private String TAG = "LoginActivitySuccess";
+    public static LoginActivitySuccess loginActivity_user_success = null;
 
     private String phoneNumber;
 
@@ -134,11 +134,11 @@ public class LoginActivity_User_Success extends AppCompatActivity {
                 switch (result) {
                     case 1:
                         Log.i(TAG, "开始登陆" + phoneNumber);
-                        bmobLogin(LoginActivity_User_Success.this, phoneNumber);
+                        bmobLogin(LoginActivitySuccess.this, phoneNumber);
                         break;
                     case 0:
                         Log.i(TAG, "开始注册" + phoneNumber);
-                        bmobRegister(LoginActivity_User_Success.this, phoneNumber);
+                        bmobRegister(LoginActivitySuccess.this, phoneNumber);
                         break;
                 }
             }
@@ -175,11 +175,11 @@ public class LoginActivity_User_Success extends AppCompatActivity {
     }
 
     private void close() {
-        if (LoginActivity_User_Login.class != null) {
-            LoginActivity_User_Login.loginActivity_User_Login.finish();
+        if (LoginActivityLogin.class != null) {
+            LoginActivityLogin.loginActivity_User_Login.finish();
         }
-        if (LoginActivity_User_Verify.class != null) {
-            LoginActivity_User_Verify.loginActivity_user_verify.finish();
+        if (LoginActivityVerify.class != null) {
+            LoginActivityVerify.loginActivity_user_verify.finish();
         }
     }
 

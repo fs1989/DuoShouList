@@ -1,6 +1,5 @@
 package com.duoshoulist.duoshoulist.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,11 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.bmob.User;
 import com.duoshoulist.duoshoulist.utils.utils;
 
 import org.buraktamturk.loadingview.LoadingView;
@@ -28,10 +25,10 @@ import cn.smssdk.SMSSDK;
  */
 
 
-public class LoginActivity_User_Verify extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivityVerify extends AppCompatActivity implements View.OnClickListener {
 
-    private String TAG = "LoginActivity_User_Verify";
-    public static LoginActivity_User_Verify loginActivity_user_verify = null;
+    private String TAG = "LoginActivityVerify";
+    public static LoginActivityVerify loginActivity_user_verify = null;
 
     private TextView textViewPhoneNumber;
     private AutoCompleteTextView autoCompleteTextView;
@@ -120,7 +117,7 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
 
                 } else {
                     ((Throwable) data).printStackTrace();
-                    utils.hideKeyboard(LoginActivity_User_Verify.this, autoCompleteTextView);
+                    utils.hideKeyboard(LoginActivityVerify.this, autoCompleteTextView);
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -136,7 +133,7 @@ public class LoginActivity_User_Verify extends AppCompatActivity implements View
     }
 
     private void login() {
-        Intent intent = new Intent(this, LoginActivity_User_Success.class);
+        Intent intent = new Intent(this, LoginActivitySuccess.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("phoneNumber", phoneNumber);
         intent.putExtras(bundle);
