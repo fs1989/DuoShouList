@@ -52,6 +52,7 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
@@ -91,7 +92,7 @@
                             android:layout_weight="1">
 
                             <android.support.v7.widget.AppCompatEditText
-                                android:id="@+id/post_one_brand"
+                                android:id="@+id/post_one_price"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="价格"
@@ -106,7 +107,7 @@
                             android:layout_weight="1">
 
                             <android.support.v7.widget.AppCompatEditText
-                                android:id="@+id/post_one_price"
+                                android:id="@+id/post_one_brand"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="品牌"
@@ -155,7 +156,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:horizontalSpacing="@dimen/space_size"
-                android:verticalSpacing="@dimen/space_size" />
+                android:verticalSpacing="@dimen/space_size"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

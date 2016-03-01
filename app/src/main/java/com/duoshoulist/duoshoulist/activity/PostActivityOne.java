@@ -1,7 +1,6 @@
 package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.bmob.User;
 import com.foamtrace.photopicker.ImageCaptureManager;
 import com.foamtrace.photopicker.PhotoPickerActivity;
 import com.foamtrace.photopicker.PhotoPreviewActivity;
@@ -37,7 +34,6 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.bmob.v3.BmobUser;
 
 /**
  * Created by Dan on 2016-02-29.
@@ -45,10 +41,13 @@ import cn.bmob.v3.BmobUser;
 
 public class PostActivityOne extends AppCompatActivity {
 
+    private String TAG = "PostActivityOne";
+
     private static final int REQUEST_CAMERA_CODE = 11;
     private static final int REQUEST_PREVIEW_CODE = 22;
     private ArrayList<String> imagePaths = null;
     private ImageCaptureManager captureManager; // 相机拍照处理类
+    StringBuffer stringBuffer;
 
     Toolbar toolbar;
 
@@ -75,6 +74,8 @@ public class PostActivityOne extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setupToolbar();
+
+        stringBuffer = new StringBuffer();
 
         int cols = getResources().getDisplayMetrics().widthPixels / getResources().getDisplayMetrics().densityDpi;
         cols = cols < 3 ? 3 : cols;
@@ -127,30 +128,43 @@ public class PostActivityOne extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.post_one_next:
-                        Intent intent = new Intent(PostActivityOne.this, PostActivityTwo.class);
+                        Log.i(TAG, "下一步被点击了");
+                        stringBuffer.setLength(0);
 
-                        if (name.getText() == null && price.getText() == null) {
+                        if (name.getText().length() == 0) {
+                            stringBuffer.append("请输入商品名称\r\n");
+                            Log.i(TAG, "1: " + stringBuffer.toString());
+                        }
+
+                        if (price.getText().length() == 0) {
+                            stringBuffer.append("请输入商品价格\r\n");
+                            Log.i(TAG, "2: " + stringBuffer.toString());
+                        }
+
+                        if (imagePaths != null) {
+                            if (imagePaths.size() < 3) {
+                                stringBuffer.append("请至少上传3张图片");
+                                Log.i(TAG, "3: " + stringBuffer.toString());
+                            }
+                        } else {
+                            stringBuffer.append("请至少上传3张图片");
+                            Log.i(TAG, "3: " + stringBuffer.toString());
+                        }
+
+                        if (stringBuffer.length() > 0) {
                             new MaterialDialog.Builder(PostActivityOne.this)
                                     .title("信息不完整")
-                                    .content("请输入商品名称和价格")
+                                    .content(stringBuffer.toString())
                                     .positiveText("好的")
-                                    .build();
-                        } else if (name.getText() == null) {
-                            new MaterialDialog.Builder(PostActivityOne.this)
-                                    .title("信息不完整")
-                                    .content("请输入商品名称")
-                                    .positiveText("好的")
-                                    .build();
-                        } else if (price.getText() == null) {
-                            new MaterialDialog.Builder(PostActivityOne.this)
-                                    .title("信息不完整")
-                                    .content("请输入价格")
-                                    .positiveText("好的")
-                                    .build();
-                        } else if (name.getText() != null && price.getText() != null) {
+                                    .show();
+                            Log.i(TAG, "if方法执行了");
+                        } else {
+                            Log.i(TAG, "else方法执行了");
+                            Intent intent = new Intent(PostActivityOne.this, PostActivityTwo.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("name", name.getText().toString());
                             bundle.putSerializable("price", price.getText().toString());
+                            bundle.putSerializable("list", imagePaths);
                             if (brand.getText() != null) {
                                 bundle.putSerializable("brand", brand.getText().toString());
                             } else {
@@ -208,13 +222,6 @@ public class PostActivityOne extends AppCompatActivity {
         imagePaths.clear();
         imagePaths.addAll(paths);
 
-        try {
-            JSONArray obj = new JSONArray(imagePaths);
-            Log.e("--", obj.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         if (gridAdapter == null) {
             gridAdapter = new GridAdapter(imagePaths);
             gridView.setAdapter(gridAdapter);
@@ -248,6 +255,7 @@ public class PostActivityOne extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+
             ImageView imageView;
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.item_post, null);
@@ -259,6 +267,7 @@ public class PostActivityOne extends AppCompatActivity {
             } else {
                 imageView = (ImageView) convertView.getTag();
             }
+
             Glide.with(PostActivityOne.this)
                     .load(new File(getItem(position)))
                     .placeholder(R.mipmap.default_error)

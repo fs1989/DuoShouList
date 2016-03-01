@@ -152,8 +152,6 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onSuccess(List<FeedItem> feedItems) {
-
-                Log.i(TAG, "feedItems的大小: " + feedItems.size());
                 if (feedItems.size() > 0) {
                     if (actionType == STATE_REFRESH) {
                         // 当是下拉刷新操作时，将当前页的编号重置为0，并把bankCards清空，重新添加

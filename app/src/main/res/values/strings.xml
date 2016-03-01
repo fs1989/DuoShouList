@@ -35,6 +35,9 @@
     <string name="title_activity_verify">验证</string>
     <string name="title_activity_success">登陆成功</string>
     <string name="title_activity_profile">个人中心</string>
+    <string name="title_activity_post_one">添加商品信息</string>
+    <string name="title_activity_post_two">添加商品信息</string>
+    <string name="title_activity_post_link">商品链接</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

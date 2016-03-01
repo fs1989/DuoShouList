@@ -24,11 +24,12 @@
             app:titleEnabled="false">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/post_toolbar"
+                android:id="@+id/post_two_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="scroll"
                 app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:title="添加商品 - Step 2/2" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
@@ -36,25 +37,29 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         app:behavior_overlapTop="56dp"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
 
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="false"
+                android:focusable="true"
                 app:cardCornerRadius="3dp"
                 app:cardElevation="8dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -62,13 +67,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
+                    android:focusable="true"
                     android:orientation="vertical">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
+                        android:layout_height="wrap_content"
                         android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="horizontal">
@@ -92,14 +98,14 @@
                             android:id="@+id/post_two_textInputLayout_des"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="16dp"
                             android:layout_marginBottom="8dp"
-                            android:layout_marginRight="16dp">
+                            android:layout_marginTop="8dp">
 
                             <android.support.v7.widget.AppCompatEditText
                                 android:id="@+id/post_two_desc"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-
                                 android:hint="点评一下这个商品"
                                 android:textSize="14sp" />
                         </android.support.design.widget.TextInputLayout>
@@ -109,7 +115,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
+                        android:layout_height="wrap_content"
                         android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="horizontal">
@@ -139,7 +145,8 @@
                                 android:id="@+id/post_two_textInputLayout_link"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp">
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginTop="8dp">
 
                                 <android.support.v7.widget.AppCompatEditText
                                     android:id="@+id/post_two_link"
@@ -173,7 +180,7 @@
                     <LinearLayout
                         android:id="@+id/category_linear_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
+                        android:layout_height="56dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="horizontal">
@@ -212,7 +219,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
+                        android:layout_height="56dp"
                         android:layout_marginBottom="16dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
@@ -253,42 +260,14 @@
 
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <GridView
+                android:id="@+id/gridView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:minHeight="128dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="false"
-                app:cardCornerRadius="3dp"
-                app:cardElevation="8dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="32dp"
-                        android:gravity="center_vertical"
-                        android:text="已添加的图片"/>
-
-
-                    <GridView
-                        android:id="@+id/post_two_grid"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:horizontalSpacing="@dimen/space_size"
-                        android:verticalSpacing="@dimen/space_size" />
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                android:horizontalSpacing="@dimen/space_size"
+                android:verticalSpacing="@dimen/space_size"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
