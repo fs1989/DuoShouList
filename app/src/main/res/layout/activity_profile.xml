@@ -7,82 +7,231 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/profile_CollapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
 
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/collapsing_toolbar"
+            <LinearLayout
+                android:id="@+id/profile_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorPrimary"
-                app:expandedTitleMarginEnd="64dp"
-                app:expandedTitleMarginStart="48dp"
-                app:titleEnabled="false"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                android:layout_marginTop="72dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_avatar"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_account_circle_white_24dp" />
+
+                <TextView
+                    android:id="@+id/profile_nick_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/profile_avatar"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="#fff"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <LinearLayout
-                        android:id="@+id/profile_linear_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="128dp"
-                        android:layout_marginTop="72dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/profile_avatar"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginStart="16dp"
-                            android:padding="16dp"
-                            android:src="@drawable/ic_account_circle_black_24dp"/>
-
-                        <TextView
-                            android:id="@+id/profile_nick_name"
+                        <LinearLayout
+                            android:id="@+id/profile_bought"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/profile_avatar"
-                            android:layout_marginTop="16dp"
-                            android:gravity="center"
-                            android:textSize="16sp" />
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="?android:attr/selectableItemBackground">
+
+                            <TextView
+                                android:id="@+id/profile_text_view_bought"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="4dp"
+                                android:paddingTop="16dp"
+                                android:text="21432 元"
+                                android:textColor="#fff" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="16dp"
+                                android:paddingTop="4dp"
+                                android:text="已经剁手"
+                                android:textColor="#fff" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/profile_like"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="?android:attr/selectableItemBackground">
+
+                            <TextView
+                                android:id="@+id/profile_text_view_like"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="4dp"
+                                android:paddingTop="16dp"
+                                android:text="0"
+                                android:textColor="#fff" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="16dp"
+                                android:paddingTop="4dp"
+                                android:text="喜欢"
+                                android:textColor="#fff" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/profile_plan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="?android:attr/selectableItemBackground">
+
+                            <TextView
+                                android:id="@+id/profile_text_view_plan"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="4dp"
+                                android:paddingTop="16dp"
+                                android:textColor="#fff"
+                                android:text="2132 元" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:paddingBottom="16dp"
+                                android:paddingTop="4dp"
+                                android:text="计划剁手"
+                                android:textColor="#fff" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                         <Button
                             android:id="@+id/profile_follow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="16dp"
-                            android:gravity="center"
-                            android:text="FOLLOW"
-                            android:visibility="gone"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:drawableTop="@drawable/ic_person_white_24dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
+                            android:text="关注" />
+
+                        <Button
+                            android:id="@+id/profile_fans"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:drawableTop="@drawable/ic_people_white_24dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
+                            android:text="粉丝" />
+                        <Button
+                            android:id="@+id/profile_comment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:drawableTop="@drawable/ic_comment_white_24dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
+                            android:text="评论" />
+
+                        <Button
+                            android:id="@+id/profile_setting"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:drawableTop="@drawable/ic_build_white_24dp"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp"
+                            android:text="设置" />
                     </LinearLayout>
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/profile_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-            </android.support.design.widget.CollapsingToolbarLayout>
+                </LinearLayout>
 
-        </android.support.design.widget.AppBarLayout>
+            </LinearLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/profile_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_below="@+id/appbar"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
         <android.support.design.widget.TabLayout
             android:id="@+id/profile_tabs"
@@ -98,7 +247,9 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/profile_recycler_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         </android.support.v7.widget.RecyclerView>
 
 

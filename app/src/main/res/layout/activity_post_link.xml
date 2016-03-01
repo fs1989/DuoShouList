@@ -67,7 +67,7 @@
             android:layout_marginRight="16dp">
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/post_one_brand"
+                android:id="@+id/post_link_link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="请将连接复制到这里"
@@ -76,10 +76,11 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:id="@+id/post_link_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="确定"/>
+            android:text="添加链接"/>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

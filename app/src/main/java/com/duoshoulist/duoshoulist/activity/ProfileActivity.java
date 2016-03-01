@@ -68,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+
         // ViewPager
         ViewPager viewPager = (ViewPager) findViewById(R.id.profile_viewpager);
         if (viewPager != null) {

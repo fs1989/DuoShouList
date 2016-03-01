@@ -17,6 +17,7 @@ public class FeedItem extends BmobObject {
     String userId;
     String url;
 
+
     public Integer getLikes() {
         return likes;
     }

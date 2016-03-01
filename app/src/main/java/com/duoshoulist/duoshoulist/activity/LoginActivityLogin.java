@@ -46,7 +46,7 @@ public class LoginActivityLogin extends AppCompatActivity implements View.OnClic
         loginActivity_User_Login = this;
 
         // Toolbar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Views

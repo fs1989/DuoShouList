@@ -74,10 +74,28 @@
             android:label="@string/title_activity_profile"
             android:parentActivityName=".activity.MainActivity"/>
         <activity
+            android:name=".activity.PostActivityTwo"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity"/>
+        <activity
             android:name=".activity.PostActivityLink"
             android:label="@string/title_activity_profile"
             android:parentActivityName=".activity.MainActivity"/>
 
+
+        <!-- https://github.com/zhengfuwang/PhotoPicker-->
+        <activity
+            android:name="com.foamtrace.photopicker.PhotoPickerActivity"
+            android:theme="@style/PhotoPickerTheme"
+            android:configChanges="orientation|screenSize"/>
+
+        <activity android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
+            android:theme="@style/PhotoPickerTheme"/>
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 
