@@ -60,8 +60,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -70,8 +73,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private Handler handler = new Handler();
 
     FeedItem feedItem;
-    List<Comment> commentData = new ArrayList<Comment>();
+    List<Comment> commentsData = new ArrayList<>();
     int commentCount;
+
+    MyUser currentUser;
 
 
 //    @Bind(R.id.detail_view_pager)
@@ -108,8 +113,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     ImageButton commentRefreshButton;
 
     // Comment RecyclerView
-    @Bind(R.id.detail_comment)
+    @Bind(R.id.detail_comment_recycler_view)
     RecyclerView commentRecyclerView;
+
     LinearLayoutManager mLayoutManager;
     CommentAdapter commentAdapter;
 
@@ -119,7 +125,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     View positiveAction;
 
     String objectId;
-    Integer likes;
+    Integer likesCount;
     String title;
     String brand;
     String price;
@@ -140,25 +146,31 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = getIntent();
         feedItem = (FeedItem) intent.getSerializableExtra("feedItem");
 
+        currentUser = BmobUser.getCurrentUser(DetailActivity.this, MyUser.class);
+
         // Toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        initView();
-        getData();
-        loadBackdrop();
-        setupMaterialDialog();
+
+        objectId = feedItem.getObjectId();
+        likesCount = feedItem.getLikeCount();
+        title = feedItem.getTitle();
+        brand = feedItem.getBrand();
+        price = feedItem.getPrice();
+        desc = feedItem.getDesc();
+        name = feedItem.getName();
+        image = feedItem.getImage();
+        createAt = feedItem.getCreatedAt();
 
         textView_title.setText(title);
         textView_desc.setText(desc);
-        btn_like.setText(likes.toString());
+        btn_like.setText(likesCount.toString());
 
-        new Thread() {
-            @Override
-            public void run() {
-                loadComments(objectId);
-            }
-        }.start();
+        loadComments();
+        initView();
+        loadBackdrop();
+        setupMaterialDialog();
     }
 
     private void initView() {
@@ -177,28 +189,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         commentRecyclerView.setLayoutManager(mLayoutManager);
 
         // Comment RecyclerView Adapter
-        commentAdapter = new CommentAdapter(DetailActivity.this, commentData);
+        commentAdapter = new CommentAdapter(DetailActivity.this, commentsData);
         commentRecyclerView.setAdapter(commentAdapter);
         commentRecyclerView.setNestedScrollingEnabled(false);
     }
 
-
-    void getData() {
-        objectId = feedItem.getObjectId();
-        likes = feedItem.getLikeCount();
-        title = feedItem.getTitle();
-        brand = feedItem.getBrand();
-        price = feedItem.getPrice();
-        desc = feedItem.getDesc();
-        name = feedItem.getName();
-        image = feedItem.getImage();
-        createAt = feedItem.getCreatedAt();
-    }
-
-
-    private void bindData() {
-
-    }
 
     private void loadBackdrop() {
         Glide.with(this).load(image).crossFade(1500).into(imageView);
@@ -213,60 +208,34 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         imageView.setLayoutParams(lp);
     }
 
-    private void loadComments(String objectId) {
+    private void loadComments() {
         commentProgressBar.setVisibility(View.VISIBLE);
-        commentData.clear();
-        commentAdapter.notifyDataSetChanged();
+        commentsData.clear();
 
         BmobQuery<Comment> query = new BmobQuery<Comment>();
-        query.addWhereEqualTo("productID", objectId);
+        query.addWhereEqualTo("feedItem", new BmobPointer(feedItem));
         query.order("createdAt");
         query.include("user");
         query.findObjects(this, new FindListener<Comment>() {
+
             @Override
             public void onSuccess(List<Comment> comments) {
-                btn_comments.setText(comments.size() + " COMMENTS");
+                Log.i(TAG, "获取评论成功");
                 commentCount = comments.size();
-                int location = 0;
-                for (Comment comment : comments) {
-                    updateUser(DetailActivity.this, location, comment, comment.getUserID());
-                    commentData.add(comment);
-                    location++;
-                }
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                commentProgressBar.setVisibility(View.GONE);
-                textView_comment.setText("评论加载失败");
-            }
-
-            @Override
-            public void onFinish() {
-                commentProgressBar.setVisibility(View.GONE);
-
-            }
-        });
-    }
-
-    public void updateUser(Context context, final int location, final Comment comment, String userID) {
-        BmobQuery<MyUser> query = new BmobQuery<>();
-        query.addWhereEqualTo("objectId", userID);
-        query.findObjects(context, new FindListener<MyUser>() {
-            @Override
-            public void onSuccess(List<MyUser> list) {
-                MyUser user = list.get(0);
-                comment.setUser(user);
-                comment.setNickName(user.getNickName());
-                comment.setAvatar(user.getAvatar());
-                commentData.set(location, comment);
+                btn_comments.setText(commentCount + " COMMENTS");
+                commentsData.addAll(comments);
+                Log.i(TAG, "commentsData: " + commentsData);
                 commentAdapter.notifyDataSetChanged();
+//                commentRecyclerView.setAdapter(commentAdapter);
+                commentProgressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onError(int code, String msg) {
-                Log.v(TAG, "查询用户失败：" + msg);
-
+                // TODO Auto-generated method stub
+                Log.i(TAG, "获取评论失败");
+                textView_comment.setText("获取评论失败");
+                commentProgressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -281,9 +250,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.detail_btn_likes:
+
                 break;
             case R.id.detail_btn_comments:
-                if (BmobUser.getCurrentUser(this) != null) {
+                if (currentUser != null) {
                     materialDialog.show();
                 } else {
                     MyUser.startLoginActivity(this);
@@ -292,11 +262,78 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.detail_btn_share:
                 break;
             case R.id.detail_comment_refresh:
-                loadComments(objectId);
+                loadComments();
                 break;
         }
     }
 
+
+    void like() {
+
+        feedItem.increment("likeCount");
+        feedItem.update(this, new UpdateListener() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "喜欢第一步成功");
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+                Log.i("life", "喜欢第一步失败");
+            }
+        });
+
+        BmobRelation relation = new BmobRelation();
+        relation.add(currentUser);
+        feedItem.setLikes(relation);
+        feedItem.update(this, new UpdateListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "喜欢第二步成功");
+
+            }
+
+            @Override
+            public void onFailure(int arg0, String arg1) {
+                Log.i("life", "喜欢第二步失败");
+            }
+        });
+    }
+
+    void disLike() {
+        feedItem.increment("likeCount", -1);
+        feedItem.update(this, new UpdateListener() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "disLike第一步成功");
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+                Log.i("life", "disLike第一步失败");
+            }
+        });
+
+
+        BmobRelation relation = new BmobRelation();
+        relation.remove(currentUser);
+        feedItem.setLikes(relation);
+        feedItem.update(this, new UpdateListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.i("life", "disLike第二部成功");
+            }
+
+            @Override
+            public void onFailure(int arg0, String arg1) {
+                Log.i("life", "disLike第二部失败：" + arg0 + "-" + arg1);
+            }
+        });
+    }
+
+    //获取屏幕的宽度
     public static int getScreenWidth(Context context) {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
@@ -324,11 +361,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         String newComment = newCommentEditText.getText().toString();
                         if (newComment != null) {
-                            Comment comment = new Comment(objectId, BmobUser.getCurrentUser(DetailActivity.this).getObjectId(), newComment);
+                            final Comment comment = new Comment();
+                            comment.setText(newComment);
+                            comment.setFeedItem(feedItem);
+                            comment.setUser(BmobUser.getCurrentUser(DetailActivity.this, MyUser.class));
+
                             comment.save(DetailActivity.this, new SaveListener() {
                                 @Override
                                 public void onSuccess() {
                                     Snackbar.make(coordinatorLayout, "评论成功", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                                    loadComments();
                                 }
 
                                 @Override
@@ -337,10 +379,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                                 }
                             });
                         } else {
-                            Snackbar.make(coordinatorLayout, "请输入一些评论", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                            Snackbar.make(coordinatorLayout, "请输入一些评论", Snackbar.LENGTH_LONG).show();
                         }
                     }
                 }).build();
+
         positiveAction = materialDialog.getActionButton(DialogAction.POSITIVE);
         //noinspection ConstantConditions
         newCommentEditText = (EditText) materialDialog.getCustomView().findViewById(R.id.new_comment_edit_text);

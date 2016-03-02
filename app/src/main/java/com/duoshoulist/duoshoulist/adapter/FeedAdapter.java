@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +19,6 @@ import com.duoshoulist.duoshoulist.bmob.MyUser;
 
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -33,13 +30,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     private final TypedValue mTypedValue = new TypedValue();
     private int mBackground;
-    private List<FeedItem> mdata;
+    private List<FeedItem> feedItemList;
     Context context;
 
     public FeedAdapter(Context context, List<FeedItem> items) {
         context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
         mBackground = mTypedValue.resourceId;
-        mdata = items;
+        feedItemList = items;
         this.context = context;
     }
 
@@ -55,12 +52,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
-        holder.objectId = mdata.get(position).getObjectId();
+        holder.objectId = feedItemList.get(position).getObjectId();
 
-        viewHolder.likes.setText(mdata.get(position).getLikeCount().toString());
-        viewHolder.desc.setText(mdata.get(position).getDesc().toString());
+        viewHolder.likes.setText(feedItemList.get(position).getLikeCount().toString());
+        viewHolder.desc.setText(feedItemList.get(position).getDesc().toString());
 
-        String image = mdata.get(position).getImage();
+        String image = feedItemList.get(position).getImage();
 
         // Load image
         if (image != null) {
@@ -68,11 +65,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
         // nickName and avatar
-        Log.i(TAG, "user = " + mdata.get(position).getUser());
-        MyUser myUser = mdata.get(position).getUser();
-        Log.i(TAG, "myUser = " + myUser);
+        MyUser myUser = feedItemList.get(position).getUser();
         String name = myUser.getNickName();
-        Log.i(TAG, "name = " + name);
         String avatar = myUser.getAvatar();
         if (name != null) {
             viewHolder.name.setText(name);
@@ -87,7 +81,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, DetailActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("feedItem", mdata.get(position));
+                bundle.putSerializable("feedItem", feedItemList.get(position));
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }
@@ -96,7 +90,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mdata.size();
+        return feedItemList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

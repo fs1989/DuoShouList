@@ -35,21 +35,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     private List<Comment> commentsData;
     private Handler handler = new Handler();
 
+
+
+
     public CommentAdapter(Context context, List<Comment> commentsData) {
         this.commentsData = commentsData;
         this.context = context;
-    }
 
-    public static interface OnRecyclerViewListener {
-        void onItemClick(int position);
-
-        boolean onItemLongClick(int position);
-    }
-
-    private OnRecyclerViewListener onRecyclerViewListener;
-
-    public void setOnRecyclerViewListener(OnRecyclerViewListener onRecyclerViewListener) {
-        this.onRecyclerViewListener = onRecyclerViewListener;
     }
 
     @Override
@@ -63,8 +55,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ViewHolder viewHolder = new ViewHolder(holder.mView);
 
-        final Comment comment = commentsData.get(position);
+        Comment comment = commentsData.get(position);
         viewHolder.text.setText(comment.getText());
+
+        String nickName = comment.getUser().getNickName();
+        String avatar = comment.getUser().getAvatar();
+
+        if (nickName != null) {
+            viewHolder.userName.setText(nickName);
+        }
+        if (avatar != null) {
+            Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
+        }
+
 
         int min = 60000; // 分钟
         int hour = min * 60; // 小时
@@ -104,18 +107,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             viewHolder.time.setText(finalTime + "年前");
         } else {
             viewHolder.time.setText("N久以前");
-        }
-
-
-
-        String nickName = comment.getUser().getNickName();
-        String avatar = comment.getUser().getAvatar();
-
-        if (nickName != null) {
-            viewHolder.userName.setText(nickName);
-        }
-        if (avatar != null) {
-            Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
         }
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {

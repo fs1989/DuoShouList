@@ -11,8 +11,7 @@ public class Comment extends BmobObject {
 
     private String text;
     private MyUser user;
-    private FeedItem post;
-
+    private FeedItem feedItem;
 
     public String getTAG() {
         return TAG;
@@ -38,11 +37,11 @@ public class Comment extends BmobObject {
         this.user = user;
     }
 
-    public FeedItem getPost() {
-        return post;
+    public FeedItem getFeedItem() {
+        return feedItem;
     }
 
-    public void setPost(FeedItem post) {
-        this.post = post;
+    public void setFeedItem(FeedItem feedItem) {
+        this.feedItem = feedItem;
     }
 }

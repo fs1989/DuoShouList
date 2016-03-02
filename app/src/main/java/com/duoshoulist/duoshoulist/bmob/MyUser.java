@@ -17,6 +17,7 @@ public class MyUser extends BmobUser {
     String nickName;
     String avatar;
     String sex;
+    FeedItem feedItem;
 
     public static void startLoginActivity(Context context) {
         Intent intent = new Intent();
@@ -50,5 +51,13 @@ public class MyUser extends BmobUser {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public FeedItem getFeedItem() {
+        return feedItem;
+    }
+
+    public void setFeedItem(FeedItem feedItem) {
+        this.feedItem = feedItem;
     }
 }
