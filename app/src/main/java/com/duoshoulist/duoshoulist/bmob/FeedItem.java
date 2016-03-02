@@ -1,36 +1,27 @@
 package com.duoshoulist.duoshoulist.bmob;
 
-import com.bmob.BmobProFile;
-
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  * Created by Dan on 2016-01-17.
  */
 public class FeedItem extends BmobObject {
 
-    Integer likes;
     String name;
     String image;
     String desc;
     String title;
     String brand;
     String price;
-    String userId;
     String url;
+    Integer likeCount;
+    MyUser user;
+    BmobRelation likes;
     List<BmobFile> imagePaths;
-
-
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
 
     public String getName() {
         return name;
@@ -80,20 +71,36 @@ public class FeedItem extends BmobObject {
         this.price = price;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public MyUser getUser() {
+        return user;
+    }
+
+    public void setUser(MyUser user) {
+        this.user = user;
+    }
+
+    public BmobRelation getLikes() {
+        return likes;
+    }
+
+    public void setLikes(BmobRelation likes) {
+        this.likes = likes;
     }
 
     public List<BmobFile> getImagePaths() {

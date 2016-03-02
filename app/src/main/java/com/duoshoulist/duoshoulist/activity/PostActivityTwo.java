@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,10 +26,8 @@ import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.Category;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 import com.foamtrace.photopicker.intent.PhotoPreviewIntent;
-
-import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -264,13 +261,13 @@ public class PostActivityTwo extends AppCompatActivity {
         feedItem = new FeedItem();
 
         feedItem.setTitle(title);
-        feedItem.setLikes(0);
+        feedItem.setLikeCount(0);
         feedItem.setDesc(desc.getText().toString());
         feedItem.setPrice(price);
         feedItem.setBrand(brand);
         feedItem.setImage(url);
         feedItem.setImagePaths(list);
-        feedItem.setUserId(BmobUser.getCurrentUser(PostActivityTwo.this, User.class).getObjectId());
+        feedItem.setUser(BmobUser.getCurrentUser(PostActivityTwo.this, MyUser.class));
 
         feedItem.save(this, new SaveListener() {
 

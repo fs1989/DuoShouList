@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +15,9 @@ import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.activity.ProfileActivity;
 import com.duoshoulist.duoshoulist.bmob.Comment;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobDate;
@@ -113,11 +108,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
 
 
-        String nickName = comment.getNickName();
-        String avatar = comment.getAvatar();
+        String nickName = comment.getUser().getNickName();
+        String avatar = comment.getUser().getAvatar();
 
-        viewHolder.userName.setText(nickName);
-        Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
+        if (nickName != null) {
+            viewHolder.userName.setText(nickName);
+        }
+        if (avatar != null) {
+            Glide.with(viewHolder.userAvatar.getContext()).load(avatar).into(viewHolder.userAvatar);
+        }
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +125,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ProfileActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("userID", commentsData.get(position).getUserID());
+                bundle.putSerializable("userID", commentsData.get(position).getUser());
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }
@@ -138,33 +137,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public int getItemCount() {
         return commentsData.size();
     }
-
-    void loadData(final ViewHolder viewHolder, Comment comment) {
-        BmobQuery<User> query = new BmobQuery<>();
-        query.addWhereEqualTo("objectId", comment.getUserID());
-        query.order("-createdAt");
-        query.findObjects(context, new FindListener<User>() {
-            @Override
-            public void onSuccess(List<User> list) {
-                // 加载昵称
-                if (list.get(0).getNickName() != null) {
-//                    viewHolder.userName.setText(list.get(0).getNickName());
-                }
-
-                // 加载头像
-                if (list.get(0).getAvatar() != null) {
-//                    Glide.with(viewHolder.userAvatar.getContext()).load(list.get(0).getAvatar()).into(viewHolder.userAvatar);
-                }
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                Log.v(TAG, "查询用户失败：" + msg);
-
-            }
-        });
-    }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 

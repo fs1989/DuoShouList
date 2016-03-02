@@ -14,7 +14,7 @@ import android.widget.SimpleAdapter;
 
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 
 import org.buraktamturk.loadingview.LoadingView;
 
@@ -99,7 +99,7 @@ public class LoginActivitySuccess extends AppCompatActivity {
     }
 
     private void setupData() {
-        User currentUser = BmobUser.getCurrentUser(this, User.class);
+        MyUser currentUser = BmobUser.getCurrentUser(this, MyUser.class);
         String phoneNumber = currentUser.getUsername();
         String nickName = currentUser.getNickName();
         String avatarAddress = currentUser.getAvatar();

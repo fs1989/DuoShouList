@@ -19,7 +19,7 @@ import android.view.View;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.MainFragmentAdapter;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 import com.duoshoulist.duoshoulist.fragment.MainFragment;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -132,13 +132,13 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.main_profile:
-                User user = BmobUser.getCurrentUser(this, User.class);
+                MyUser user = BmobUser.getCurrentUser(this, MyUser.class);
                 Log.i(TAG, "user = " + user);
                 if (user != null) {
                     Intent intent = new Intent(this, ProfileActivity.class);
                     startActivity(intent);
                 } else {
-                    User.startLoginActivity(this);
+                    MyUser.startLoginActivity(this);
                 }
 
                 break;

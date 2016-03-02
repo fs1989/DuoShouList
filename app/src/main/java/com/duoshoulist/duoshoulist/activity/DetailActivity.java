@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -52,7 +51,7 @@ import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +185,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     void getData() {
         objectId = feedItem.getObjectId();
-        likes = feedItem.getLikes();
+        likes = feedItem.getLikeCount();
         title = feedItem.getTitle();
         brand = feedItem.getBrand();
         price = feedItem.getPrice();
@@ -222,6 +221,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         BmobQuery<Comment> query = new BmobQuery<Comment>();
         query.addWhereEqualTo("productID", objectId);
         query.order("createdAt");
+        query.include("user");
         query.findObjects(this, new FindListener<Comment>() {
             @Override
             public void onSuccess(List<Comment> comments) {
@@ -250,12 +250,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void updateUser(Context context, final int location, final Comment comment, String userID) {
-        BmobQuery<User> query = new BmobQuery<>();
+        BmobQuery<MyUser> query = new BmobQuery<>();
         query.addWhereEqualTo("objectId", userID);
-        query.findObjects(context, new FindListener<User>() {
+        query.findObjects(context, new FindListener<MyUser>() {
             @Override
-            public void onSuccess(List<User> list) {
-                User user = list.get(0);
+            public void onSuccess(List<MyUser> list) {
+                MyUser user = list.get(0);
                 comment.setUser(user);
                 comment.setNickName(user.getNickName());
                 comment.setAvatar(user.getAvatar());
@@ -286,7 +286,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 if (BmobUser.getCurrentUser(this) != null) {
                     materialDialog.show();
                 } else {
-                    User.startLoginActivity(this);
+                    MyUser.startLoginActivity(this);
                 }
                 break;
             case R.id.detail_btn_share:

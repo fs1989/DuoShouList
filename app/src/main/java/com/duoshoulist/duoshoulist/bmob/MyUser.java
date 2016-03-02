@@ -10,9 +10,9 @@ import cn.bmob.v3.BmobUser;
 /**
  * Created by Dan on 2016/1/29.
  */
-public class User extends BmobUser {
+public class MyUser extends BmobUser {
 
-    final String TAG = "User";
+    final String TAG = "MyUser";
 
     String nickName;
     String avatar;
@@ -22,6 +22,10 @@ public class User extends BmobUser {
         Intent intent = new Intent();
         intent.setClass(context, LoginActivityLogin.class);
         context.startActivity(intent);
+    }
+
+    public String getTAG() {
+        return TAG;
     }
 
     public String getNickName() {
@@ -47,5 +51,4 @@ public class User extends BmobUser {
     public void setSex(String sex) {
         this.sex = sex;
     }
-
 }

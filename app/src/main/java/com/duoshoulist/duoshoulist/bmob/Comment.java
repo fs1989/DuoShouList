@@ -1,13 +1,6 @@
 package com.duoshoulist.duoshoulist.bmob;
 
-import android.content.Context;
-import android.util.Log;
-
-import java.util.List;
-
 import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
 
 /**
  * Created by Dan on 2016/2/1.
@@ -16,35 +9,17 @@ public class Comment extends BmobObject {
 
     private String TAG = "Comment";
 
-    private String productID;
-    private String userID;
     private String text;
-
-    private User user;
-    private String avatar;
-    private String nickName;
+    private MyUser user;
+    private FeedItem post;
 
 
-    public Comment(String productID, String userID, String text) {
-        this.productID = productID;
-        this.userID = userID;
-        this.text = text;
+    public String getTAG() {
+        return TAG;
     }
 
-    public String getProductID() {
-        return productID;
-    }
-
-    public void setProductID(String productID) {
-        this.productID = productID;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setTAG(String TAG) {
+        this.TAG = TAG;
     }
 
     public String getText() {
@@ -55,27 +30,19 @@ public class Comment extends BmobObject {
         this.text = text;
     }
 
-    public User getUser() {
+    public MyUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(MyUser user) {
         this.user = user;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public FeedItem getPost() {
+        return post;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setPost(FeedItem post) {
+        this.post = post;
     }
 }

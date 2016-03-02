@@ -14,12 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.MainFragmentAdapter;
-import com.duoshoulist.duoshoulist.bmob.User;
-import com.duoshoulist.duoshoulist.fragment.MainFragment;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 import com.duoshoulist.duoshoulist.fragment.ProfileLikeFragment;
 import com.duoshoulist.duoshoulist.fragment.ProfileOriginalFragment;
 
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,8 +54,8 @@ public class ProfileActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.profile_logoff:
-                        User.logOut(ProfileActivity.this);   //清除缓存用户对象
-                        BmobUser user = BmobUser.getCurrentUser(ProfileActivity.this, User.class);
+                        MyUser.logOut(ProfileActivity.this);   //清除缓存用户对象
+                        BmobUser user = BmobUser.getCurrentUser(ProfileActivity.this, MyUser.class);
                         Log.i(TAG, "user after logoff clicked:" + user);
                         ProfileActivity.this.finish();
                         break;

@@ -16,13 +16,11 @@ import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.activity.DetailActivity;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
-import com.duoshoulist.duoshoulist.bmob.User;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -59,40 +57,29 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         holder.objectId = mdata.get(position).getObjectId();
 
-        viewHolder.likes.setText(mdata.get(position).getLikes().toString());
-
+        viewHolder.likes.setText(mdata.get(position).getLikeCount().toString());
         viewHolder.desc.setText(mdata.get(position).getDesc().toString());
 
         String image = mdata.get(position).getImage();
-        String userId = mdata.get(position).getUserId();
 
         // Load image
         if (image != null) {
             Glide.with(holder.image.getContext()).load(image).crossFade().into(viewHolder.image);
         }
 
-        // Load Avatar
-        BmobQuery<User> query = new BmobQuery<User>();
-        query.addWhereEqualTo("objectId", userId);
-        query.findObjects(context, new FindListener<User>() {
-            @Override
-            public void onSuccess(List<User> list) {
-                User user = list.get(0);
-                String name = user.getNickName();
-                String avatar = user.getAvatar();
-                if (avatar != null) {
-                    viewHolder.name.setText(name);
-                    Glide.with(holder.avatar.getContext()).load(avatar).into(viewHolder.avatar);
-                }
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                Log.i(TAG, "获取user失败: " + msg);
-            }
-        });
-
-
+        // nickName and avatar
+        Log.i(TAG, "user = " + mdata.get(position).getUser());
+        MyUser myUser = mdata.get(position).getUser();
+        Log.i(TAG, "myUser = " + myUser);
+        String name = myUser.getNickName();
+        Log.i(TAG, "name = " + name);
+        String avatar = myUser.getAvatar();
+        if (name != null) {
+            viewHolder.name.setText(name);
+        }
+        if (avatar != null) {
+            Glide.with(holder.avatar.getContext()).load(avatar).into(viewHolder.avatar);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
