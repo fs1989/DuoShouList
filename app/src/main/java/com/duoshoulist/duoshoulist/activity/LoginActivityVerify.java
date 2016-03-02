@@ -90,30 +90,41 @@ public class LoginActivityVerify extends AppCompatActivity implements View.OnCli
 
                 if (result == SMSSDK.RESULT_COMPLETE) {
                     //回调完成
-                    boolean smart = (Boolean)data;
-                    if(smart) {
-                        //通过智能验证
-                        login();
-                    } else {
-                        //依然走短信验证
+
                         if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
                             //验证码验证成功
                             Log.i(TAG, "验证成功");
-                            Snackbar.make(loadingView, "智能验证，即将登陆", Snackbar.LENGTH_LONG);
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    login();
-                                }
-                            }, 2000);
+                            login();
 
                         } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                             //发送验证码成功
+                            Snackbar.make(loadingView, "智能验证，即将登陆", Snackbar.LENGTH_LONG);
+                        } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+                            //发送验证码成功
+                            Log.i(TAG, "验证码发送请求成功");
+                            boolean smart = (Boolean) data;
+                            if (smart) {
+                                //通过智能验证
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadingView.setText("智能验证成功，即将登陆");
+                                    }
+                                }, 1500);
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        login();
+                                    }
+                                }, 2000);
+                            } else {
+                                //依然走短信验证
+                            }
                             Log.i(TAG, "验证码发送请求成功");
                         } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
                             //返回支持发送验证码的国家列表
                         }
-                    }
+
 
                 } else {
                     ((Throwable) data).printStackTrace();
@@ -126,6 +137,7 @@ public class LoginActivityVerify extends AppCompatActivity implements View.OnCli
                         }
                     }, 2000);
                     Log.i(TAG, "错误信息: " + ((Throwable) data).getMessage());
+                    login();
                 }
             }
         };

@@ -15,3 +15,31 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# http://docs.bmob.cn/android/developdoc/index.html?menukey=develop_doc&key=develop_android#index_混淆打包的相关问题
+-ignorewarnings
+
+# 这里根据具体的SDK版本修改
+-libraryjars libs/bmob_v3.0.9beta.jar
+
+-keepattributes Signature
+-keep class cn.bmob.v3.** {*;}
+
+# 保证继承自BmobObject、BmobUser类的JavaBean不被混淆
+-keep class com.example.bmobexample.bean.BankCard{*;}
+-keep class com.example.bmobexample.bean.GameScore{*;}
+-keep class com.example.bmobexample.bean.MyUser{*;}
+-keep class com.example.bmobexample.bean.Person{*;}
+
+-keep class com.example.bmobexample.file.Movie{*;}
+-keep class com.example.bmobexample.file.Song{*;}
+
+-keep class com.example.bmobexample.relation.Post{*;}
+-keep class com.example.bmobexample.relation.Comment{*;}
+
+# 如果你使用了okhttp、okio的包，请添加以下混淆代码
+-dontwarn com.squareup.okhttp.**
+-keep class com.squareup.okhttp.** { *;}
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn okio.**
+# http://docs.bmob.cn/android/developdoc/index.html?menukey=develop_doc&key=develop_android#index_混淆打包的相关问题

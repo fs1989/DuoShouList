@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -56,6 +57,8 @@ import com.duoshoulist.duoshoulist.bmob.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
@@ -71,24 +74,42 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     List<Comment> commentData = new ArrayList<Comment>();
     int commentCount;
 
+
+//    @Bind(R.id.detail_view_pager)
+//    ViewPager viewPager;
+
     // 图 标题 描述
+    @Bind(R.id.detail_image)
     ImageView imageView;
+    @Bind(R.id.detail_title)
     TextView textView_title;
+    @Bind(R.id.detail_desc)
     TextView textView_desc;
+    @Bind(R.id.detail_textView_comment)
     TextView textView_comment;
+    @Bind(R.id.detail_toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.detail_fab)
     FloatingActionButton floatingActionButton;
+    @Bind(R.id.detail_content)
     CoordinatorLayout coordinatorLayout;
 
     // 3 Buttons
+    @Bind(R.id.detail_btn_likes)
     Button btn_like;
+    @Bind(R.id.detail_btn_comments)
     Button btn_comments;
+    @Bind(R.id.detail_btn_share)
     Button btn_share;
 
     // Comment
+    @Bind(R.id.detail_comment_pb)
     ProgressBar commentProgressBar;
+    @Bind(R.id.detail_comment_refresh)
     ImageButton commentRefreshButton;
 
     // Comment RecyclerView
+    @Bind(R.id.detail_comment)
     RecyclerView commentRecyclerView;
     LinearLayoutManager mLayoutManager;
     CommentAdapter commentAdapter;
@@ -97,8 +118,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     EditText newCommentEditText;
     MaterialDialog materialDialog;
     View positiveAction;
-
-    int comment_count;
 
     String objectId;
     Integer likes;
@@ -117,17 +136,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         feedItem = (FeedItem) intent.getSerializableExtra("feedItem");
 
         // Toolbar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.detail_fab);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
 
         initView();
         getData();
@@ -147,29 +163,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
-        // Main
-        imageView = (ImageView) findViewById(R.id.detail_image);
-        textView_title = (TextView) findViewById(R.id.detail_title);
-        textView_desc = (TextView) findViewById(R.id.detail_desc);
-        textView_comment = (TextView) findViewById(R.id.detail_textView_comment);
-
-        btn_like = (Button) findViewById(R.id.detail_btn_likes);
-        btn_comments = (Button) findViewById(R.id.detail_btn_comments);
-        btn_share = (Button) findViewById(R.id.detail_btn_share);
 
         btn_like.setOnClickListener(this);
         btn_comments.setOnClickListener(this);
         btn_share.setOnClickListener(this);
 
         // Comment
-        commentRefreshButton = (ImageButton) findViewById(R.id.detail_comment_refresh);
-        commentProgressBar = (ProgressBar) findViewById(R.id.detail_comment_pb);
         commentRefreshButton.setOnClickListener(this);
         commentProgressBar.setVisibility(View.VISIBLE);
 
 
         // Comment RecyclerView
-        commentRecyclerView = (RecyclerView) findViewById(R.id.detail_comment);
         mLayoutManager = new LinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
         commentRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -264,10 +268,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 Log.v(TAG, "查询用户失败：" + msg);
 
             }
-
-
         });
-
     }
 
     @Override

@@ -48,6 +48,8 @@ public class PostActivityOne extends AppCompatActivity {
     private ArrayList<String> imagePaths = null;
     private ImageCaptureManager captureManager; // 相机拍照处理类
     StringBuffer stringBuffer;
+    private int columnWidth;
+    private GridAdapter gridAdapter;
 
     Toolbar toolbar;
 
@@ -57,15 +59,10 @@ public class PostActivityOne extends AppCompatActivity {
     TextView brand;
     @Bind(R.id.post_one_price)
     TextView price;
-
     @Bind(R.id.post_one_add)
     ImageButton imageButton;
-
     @Bind(R.id.gridView)
     GridView gridView;
-
-    private int columnWidth;
-    private GridAdapter gridAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

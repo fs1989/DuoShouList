@@ -1,6 +1,11 @@
 package com.duoshoulist.duoshoulist.bmob;
 
+import com.bmob.BmobProFile;
+
+import java.util.List;
+
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  * Created by Dan on 2016-01-17.
@@ -16,6 +21,7 @@ public class FeedItem extends BmobObject {
     String price;
     String userId;
     String url;
+    List<BmobFile> imagePaths;
 
 
     public Integer getLikes() {
@@ -88,5 +94,13 @@ public class FeedItem extends BmobObject {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<BmobFile> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<BmobFile> imagePaths) {
+        this.imagePaths = imagePaths;
     }
 }

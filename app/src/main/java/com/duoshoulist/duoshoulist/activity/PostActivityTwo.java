@@ -22,21 +22,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bmob.BmobProFile;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.bmob.Category;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
+import com.duoshoulist.duoshoulist.bmob.User;
 import com.foamtrace.photopicker.intent.PhotoPreviewIntent;
 
 import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
@@ -76,9 +81,11 @@ public class PostActivityTwo extends AppCompatActivity {
 
     List<String> categoryList = new ArrayList<>();
 
-    String name;
+    String title;
     String price;
     String brand;
+    private FeedItem feedItem;
+    private StringBuffer stringBuffer = new StringBuffer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +94,7 @@ public class PostActivityTwo extends AppCompatActivity {
         ButterKnife.bind(this);
         setupToolbar();
 
-        name = (String) getIntent().getSerializableExtra("name");
+        title = (String) getIntent().getSerializableExtra("name");
         price = (String) getIntent().getSerializableExtra("price");
         brand = (String) getIntent().getSerializableExtra("brand");
         imagePaths = (ArrayList<String>) getIntent().getSerializableExtra("list");
@@ -190,52 +197,93 @@ public class PostActivityTwo extends AppCompatActivity {
 
     private void check() {
 
+        stringBuffer.setLength(0);
         int desLength = textInputLayoutDes.getEditText().toString().length();
         int categoryLength = textInputLayoutDes.getEditText().toString().length();
 
-        if (desLength < 20 && categoryLength != 0) {
+        if (desLength < 20) {
+            stringBuffer.append("请输入至少20字的点评\n");
+        }
+
+        if (categoryLength == 0) {
+            stringBuffer.append("请选择一个分类\n");
+        }
+
+        if (stringBuffer.length() > 0) {
             new MaterialDialog.Builder(this)
                     .title("信息不完整")
-                    .content("请输入至少20字的点评")
+                    .content(stringBuffer.toString())
                     .positiveText("好的")
                     .build();
-        } else if (categoryLength == 0 && desLength >= 20) {
-            new MaterialDialog.Builder(this)
-                    .title("信息不完整")
-                    .content("请选择一个分类")
-                    .positiveText("好的")
-                    .build();
-        } else if (desLength < 20 && categoryLength == 0) {
-            new MaterialDialog.Builder(this)
-                    .title("信息不完整")
-                    .content("请输入至少20字的点评" + "\r\n" + "请选择一个分类")
-                    .positiveText("好的")
-                    .build();
-        } else if (desLength >= 20 && categoryLength != 0) {
-//            submit();
-            Log.i(TAG, "模拟上传执行了");
+        } else {
+            uploadPics();
         }
     }
 
-    private void submit() {
-        FeedItem feedItem = new FeedItem();
+    private void uploadPics() {
 
-//注意：不能调用gameScore.setObjectId("")方法
-        feedItem.setTitle(name);
+        String[] files = new String[imagePaths.size()];
+
+        for (int i = 0; i < imagePaths.size(); i++) {
+            files[i] = imagePaths.get(i);
+        }
+
+        BmobProFile.getInstance(PostActivityTwo.this).uploadBatch(files, new com.bmob.btp.callback.UploadBatchListener() {
+            @Override
+            public void onSuccess(boolean isFinish, String[] fileNames, String[] urls, BmobFile[] bmobFiles) {
+                Log.i(TAG, "图片上传成功");
+                List paths = Arrays.asList(bmobFiles);
+                if (isFinish) {
+                    createFeedItem(paths, bmobFiles[0].getUrl());
+                }
+                // isFinish ：批量上传是否完成
+                // fileNames：文件名数组
+                // urls : url：文件地址数组
+                // files : BmobFile文件数组，`V3.4.1版本`开始提供，用于兼容新旧文件服务。
+                // 注：若上传的是图片，url(s)并不能直接在浏览器查看（会出现404错误），需要经过`URL签名`得到真正的可访问的URL地址,当然，`V3.4.1`版本可直接从BmobFile中获得可访问的文件地址。
+            }
+
+            @Override
+            public void onProgress(int curIndex, int curPercent, int total, int totalPercent) {
+                // curIndex    :表示当前第几个文件正在上传
+                // curPercent  :表示当前上传文件的进度值（百分比）
+                // total       :表示总的上传文件数
+                // totalPercent:表示总的上传进度（百分比）
+                Log.i("bmob", "onProgress :" + curIndex + "---" + curPercent + "---" + total + "----" + totalPercent);
+            }
+
+            @Override
+            public void onError(int statuscode, String errormsg) {
+                // TODO Auto-generated method stub
+                Log.i("bmob", "批量上传出错：" + statuscode + "--" + errormsg);
+            }
+        });
+    }
+
+    private void createFeedItem(List<BmobFile> list, String url) {
+        feedItem = new FeedItem();
+
+        feedItem.setTitle(title);
+        feedItem.setLikes(0);
         feedItem.setDesc(desc.getText().toString());
+        feedItem.setPrice(price);
         feedItem.setBrand(brand);
-//        feedItem.setImage();
+        feedItem.setImage(url);
+        feedItem.setImagePaths(list);
+        feedItem.setUserId(BmobUser.getCurrentUser(PostActivityTwo.this, User.class).getObjectId());
 
         feedItem.save(this, new SaveListener() {
 
             @Override
             public void onSuccess() {
+                feedItem.getObjectId();
                 Log.i(TAG, "feedItem上传成功");
             }
 
             @Override
             public void onFailure(int code, String arg0) {
                 // 添加失败
+                // TODO: 2016/3/2
             }
         });
     }
