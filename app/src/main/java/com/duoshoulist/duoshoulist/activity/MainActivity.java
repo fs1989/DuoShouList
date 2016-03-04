@@ -42,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private IWXAPI api;
 
     // ShareSDK SMS
-    private String mobAppKey = "f87379172d4e";
-    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
+//    private String mobAppKey = "f87379172d4e";
+//    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
+    private String mobAppKey = "f3fc6baa9ac4";
+    private String mobAppSecret = "7f3dedcb36d92deebcb373af921d635a";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,10 +156,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                Intent intent = new Intent(MainActivity.this, PostActivityOne.class);
-                startActivity(intent);
+                if (MyUser.getCurrentUser(MainActivity.this) == null) {
+                    MyUser.startLoginActivity(MainActivity.this);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, PostActivityOne.class);
+                    startActivity(intent);
+                }
             }
         });
     }

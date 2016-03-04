@@ -1,6 +1,8 @@
 package com.duoshoulist.duoshoulist.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -46,7 +48,7 @@ import cn.bmob.v3.listener.SaveListener;
  * Created by Dan on 2016-02-29.
  */
 public class PostActivityTwo extends AppCompatActivity {
-
+    Handler handler = new Handler();
     private static final int REQUEST_CAMERA_CODE = 11;
     private static final int REQUEST_PREVIEW_CODE = 22;
     private int columnWidth;
@@ -83,6 +85,7 @@ public class PostActivityTwo extends AppCompatActivity {
     String brand;
     private FeedItem feedItem;
     private StringBuffer stringBuffer = new StringBuffer();
+    private boolean isUploading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,12 +216,14 @@ public class PostActivityTwo extends AppCompatActivity {
                     .positiveText("好的")
                     .build();
         } else {
-            uploadPics();
+            if (isUploading != true) {
+                uploadPics();
+            }
         }
     }
 
     private void uploadPics() {
-
+        isUploading = true;
         String[] files = new String[imagePaths.size()];
 
         for (int i = 0; i < imagePaths.size(); i++) {
@@ -275,12 +280,23 @@ public class PostActivityTwo extends AppCompatActivity {
             public void onSuccess() {
                 feedItem.getObjectId();
                 Log.i(TAG, "feedItem上传成功");
+                Snackbar.make(gridView, "提交成功", Snackbar.LENGTH_LONG).show();
+                if (PostActivityOne.class != null) {
+                    PostActivityOne.postActivityOne.finish();
+                }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        PostActivityTwo.this.finish();
+                    }
+                }, 2000);
             }
 
             @Override
             public void onFailure(int code, String arg0) {
                 // 添加失败
                 // TODO: 2016/3/2
+                Snackbar.make(gridView, "提交失败", Snackbar.LENGTH_LONG).show();
             }
         });
     }

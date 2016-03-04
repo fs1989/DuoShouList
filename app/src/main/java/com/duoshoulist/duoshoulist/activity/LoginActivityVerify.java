@@ -137,7 +137,7 @@ public class LoginActivityVerify extends AppCompatActivity implements View.OnCli
                         }
                     }, 2000);
                     Log.i(TAG, "错误信息: " + ((Throwable) data).getMessage());
-                    login();
+//                    login();
                 }
             }
         };

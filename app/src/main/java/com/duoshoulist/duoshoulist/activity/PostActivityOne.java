@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 public class PostActivityOne extends AppCompatActivity {
 
     private String TAG = "PostActivityOne";
+    public static PostActivityOne postActivityOne = null;
 
     private static final int REQUEST_CAMERA_CODE = 11;
     private static final int REQUEST_PREVIEW_CODE = 22;
@@ -69,7 +70,7 @@ public class PostActivityOne extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_one);
         ButterKnife.bind(this);
-
+        postActivityOne = this;
         setupToolbar();
 
         stringBuffer = new StringBuffer();

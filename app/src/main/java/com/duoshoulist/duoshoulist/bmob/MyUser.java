@@ -19,6 +19,10 @@ public class MyUser extends BmobUser {
     String sex;
     FeedItem feedItem;
 
+    public static MyUser getCurrentUser(Context context) {
+        return BmobUser.getCurrentUser(context, MyUser.class);
+    }
+
     public static void startLoginActivity(Context context) {
         Intent intent = new Intent();
         intent.setClass(context, LoginActivityLogin.class);
