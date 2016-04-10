@@ -18,6 +18,7 @@ package com.duoshoulist.duoshoulist.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -41,6 +42,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -49,6 +51,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.CommentAdapter;
+import com.duoshoulist.duoshoulist.adapter.ImagesAdapter;
 import com.duoshoulist.duoshoulist.bmob.Comment;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
 import com.duoshoulist.duoshoulist.bmob.MyUser;
@@ -60,27 +63,25 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener, ImagesAdapter.OnImageClickListener {
 
     private String TAG = "DetailActivity";
 
     private Handler handler = new Handler();
 
+    MyUser currentUser;
     FeedItem feedItem;
     List<Comment> commentsData = new ArrayList<>();
     int commentCount;
 
-    MyUser currentUser;
-
-
-//    @Bind(R.id.detail_view_pager)
-//    ViewPager viewPager;
+    // Images Rec
 
     // 图 标题 描述
     @Bind(R.id.detail_image)
@@ -106,6 +107,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.detail_btn_share)
     Button btn_share;
 
+    // Image RecyclerView
+    @Bind(R.id.detail_image_linearLayout)
+    LinearLayout imageLinearLayout;
+    @Bind(R.id.detail_images_recycler_view)
+    RecyclerView imageRecyclerView;
+    LinearLayoutManager imageLayoutManager;
+    ImagesAdapter imageAdapter;
+
+    // Images
+    @Bind(R.id.detail_image_pb)
+    ProgressBar ImageProgressBar;
+
     // Comment
     @Bind(R.id.detail_comment_pb)
     ProgressBar commentProgressBar;
@@ -115,8 +128,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     // Comment RecyclerView
     @Bind(R.id.detail_comment_recycler_view)
     RecyclerView commentRecyclerView;
-
-    LinearLayoutManager mLayoutManager;
+    LinearLayoutManager commentLayoutManager;
     CommentAdapter commentAdapter;
 
     // MaterialDialog
@@ -132,6 +144,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     String desc;
     String name;
     String image;
+    List<BmobFile> imagePaths;
     String createAt;
 
     int screenWidth;
@@ -162,6 +175,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         name = feedItem.getName();
         image = feedItem.getImage();
         createAt = feedItem.getCreatedAt();
+        imagePaths = feedItem.getImagePaths();
 
         textView_title.setText(title);
         textView_desc.setText(desc);
@@ -179,19 +193,44 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         btn_comments.setOnClickListener(this);
         btn_share.setOnClickListener(this);
 
+        if (imagePaths != null) {
+            setupImages();
+        } else {
+            imageLinearLayout.setVisibility(View.INVISIBLE);
+        }
+
+
+        // Comment RecyclerView
+        commentLayoutManager = new LinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
+        commentRecyclerView.setLayoutManager(commentLayoutManager);
+
         // Comment
         commentRefreshButton.setOnClickListener(this);
         commentProgressBar.setVisibility(View.VISIBLE);
 
-
         // Comment RecyclerView
-        mLayoutManager = new LinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
-        commentRecyclerView.setLayoutManager(mLayoutManager);
+        commentLayoutManager = new LinearLayoutManager(DetailActivity.this, OrientationHelper.VERTICAL, true);
+        commentRecyclerView.setLayoutManager(commentLayoutManager);
 
         // Comment RecyclerView Adapter
         commentAdapter = new CommentAdapter(DetailActivity.this, commentsData);
         commentRecyclerView.setAdapter(commentAdapter);
         commentRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private void setupImages() {
+        // Images RecyclerView
+        imageLayoutManager = new LinearLayoutManager(DetailActivity.this);
+        imageLayoutManager.setOrientation(OrientationHelper.HORIZONTAL);
+        imageRecyclerView.setLayoutManager(imageLayoutManager);
+
+        // Image RecyclerView Adapter
+        imageAdapter = new ImagesAdapter(DetailActivity.this, imagePaths, this);
+        imageRecyclerView.setAdapter(imageAdapter);
+        imageRecyclerView.setNestedScrollingEnabled(false);
+
+        // Images
+//        ImageProgressBar.setVisibility(View.VISIBLE);
     }
 
 
@@ -402,5 +441,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
         positiveAction.setEnabled(false); // disabled by default
+    }
+
+    @Override
+    public void onImageClicked(View v) {
+        v.setDrawingCacheEnabled(true);
+        Bitmap bitmap= v.getDrawingCache(true);
+        imageView.setImageBitmap(bitmap);
+        Log.i(TAG, "onImageClick方法执行了");
     }
 }

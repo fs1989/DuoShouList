@@ -42,7 +42,7 @@ import cn.bmob.v3.listener.FindListener;
 
 public class ProfileLikeFragment extends Fragment {
 
-    final String TAG = "MainFragment";
+    final String TAG = "SelectedFragment";
 
     private static final int STATE_REFRESH = 0;// 下拉刷新
     private static final int STATE_MORE = 1;// 加载更多
@@ -58,7 +58,7 @@ public class ProfileLikeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.swipe_refresh_layout_main, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_selected, container, false);
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

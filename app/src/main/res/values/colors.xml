@@ -15,13 +15,16 @@
   -->
 
 <resources>
-    <color name="window_background">#FFF5F5F5</color>
+    <color name="window_background">#FFFFFF</color>
+    <color name="window_background_gray">#FFF5F5F5</color>
+    <color name="window_background_300">#E0E0E0</color>
+    <color name="window_background_600">#757575</color>
     <color name="transparency">#00000000</color>
     <color name="transparency9000">#9000</color>
     <color name="text_like_counter">#2b5a83</color>
 
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#512DA8</color>
+    <color name="colorPrimaryDark">#512DA8</color>
     <color name="colorAccent">#FF4081</color>
 
     <!--<color name="colorPrimary_old">#4CAD65</color>-->

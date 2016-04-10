@@ -19,8 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -69,7 +68,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/detail_image_linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@color/window_background"
+                    android:orientation="vertical" >
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyle"
+                        android:id="@+id/detail_image_pb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:id="@+id/detail_images_recycler_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="128dp" />
+            </LinearLayout>
 
             <LinearLayout
                 style="@style/Widget.CardContent"
