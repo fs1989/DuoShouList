@@ -35,11 +35,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
 import com.duoshoulist.duoshoulist.R;
 import com.duoshoulist.duoshoulist.adapter.FeedAdapter;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,8 +101,14 @@ public class SelectedFragment extends Fragment {
             }
         });
 
+        // Recycler View
         recyclerView = (RecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
+
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) getView().findViewById(R.id.selected_fab);
+        floatingActionButton.attachToRecyclerView(recyclerView);
+        floatingActionButton.show(false);
         checkLaunchTime();
     }
 
