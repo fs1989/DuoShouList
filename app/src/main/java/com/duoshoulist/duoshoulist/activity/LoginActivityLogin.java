@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -105,6 +106,7 @@ public class LoginActivityLogin extends AppCompatActivity implements View.OnClic
         context.startActivity(intent);
         //发送验证码
         SMSSDK.getVerificationCode("86", phoneNumber);
+        Log.i(TAG, "sendVerifyCode执行了");
     }
 
 

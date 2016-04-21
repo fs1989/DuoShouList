@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
     // ShareSDK SMS
     //    private String mobAppKey = "f87379172d4e";
     //    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
-    private String mobAppKey = "f3fc6baa9ac4";
-    private String mobAppSecret = "7f3dedcb36d92deebcb373af921d635a";
+    private String mobAppKey = "f87379172d4e";
+    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
 //        ab.setDisplayHomeAsUpEnabled(true);
 
         setupBottomBar(savedInstanceState);
-        addFlotingActionButton();
 
         //  Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -176,22 +175,6 @@ public class MainActivity extends AppCompatActivity {
         // Necessary to restore the BottomBar's state, otherwise we would
         // lose the current tab on orientation change.
         mBottomBar.onSaveInstanceState(outState);
-    }
-
-
-    private void addFlotingActionButton() {
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (MyUser.getCurrentUser(MainActivity.this) == null) {
-//                    MyUser.startLoginActivity(MainActivity.this);
-//                } else {
-//                    Intent intent = new Intent(MainActivity.this, PostActivityOne.class);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
     }
 
 }
