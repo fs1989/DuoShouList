@@ -27,7 +27,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     OnImageClickListener onImageClickListener;
 
-    public ImagesAdapter(Context context, List<BmobFile> imagePaths, OnImageClickListener onImageClickListener) {
+    public ImagesAdapter(Context context, List<BmobFile> imagePaths) {
         this.imagePaths = imagePaths;
         this.context = context;
         this.onImageClickListener = onImageClickListener;
@@ -82,6 +82,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     public interface OnImageClickListener {
         void onImageClicked(View v);
+        void onImageLoaded();
     }
 
 }

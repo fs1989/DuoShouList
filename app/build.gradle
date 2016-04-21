@@ -74,4 +74,9 @@ dependencies {
 
     // https://github.com/makovkastar/FloatingActionButton
     compile 'com.melnykov:floatingactionbutton:1.3.0'
+
+    // https://github.com/bingoogolapple/BGABanner-Android
+    compile 'cn.bingoogolapple:bga-banner:2.0.4@aar'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.nineoldandroids:library:2.4.0'
 }
