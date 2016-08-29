@@ -84,6 +84,7 @@ public class LoginActivityVerify extends AppCompatActivity implements View.OnCli
 
     private EventHandler eh;
     private void setupLoginListener() {
+        Log.i(TAG,"setupLoginListener执行了");
         eh = new EventHandler() {
             @Override
             public void afterEvent(int event, int result, final Object data) {
@@ -137,7 +138,7 @@ public class LoginActivityVerify extends AppCompatActivity implements View.OnCli
                         }
                     }, 2000);
                     Log.i(TAG, "错误信息: " + ((Throwable) data).getMessage());
-//                    login();
+                    login();
                 }
             }
         };

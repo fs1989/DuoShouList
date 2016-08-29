@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
     // ShareSDK SMS
     //    private String mobAppKey = "f87379172d4e";
     //    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
-    private String mobAppKey = "f3fc6baa9ac4";
-    private String mobAppSecret = "7f3dedcb36d92deebcb373af921d635a";
+    private String mobAppKey = "f87379172d4e";
+    private String mobAppSecret = "cbd32bc5c4d5381d63047311262dce49";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
 //        ab.setDisplayHomeAsUpEnabled(true);
 
         setupBottomBar(savedInstanceState);
-        addFlotingActionButton();
 
         //  Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         mBottomBar = BottomBar.attachShy(coordinatorLayout, findViewById(R.id.main_nestedScrollView), savedInstanceState);
 
         // Show all titles even when there's more than three tabs.
-        mBottomBar.useFixedMode();
+//        mBottomBar.useFixedMode();
 //        mBottomBar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
         mBottomBar.setItems(
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 new BottomBarTab(R.drawable.ic_format_list_numbered_white_24dp, "清单"),
                 new BottomBarTab(R.drawable.ic_account_circle_white_24dp, "我的")
         );
+
 
         // Listen for tab changes
         mBottomBar.setOnTabClickListener(new OnTabClickListener() {
@@ -117,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mBottomBar.mapColorForTab(0, "#7B1FA2");
-        mBottomBar.mapColorForTab(1, "#7B1FA2");
-        mBottomBar.mapColorForTab(2, "#7B1FA2");
-        mBottomBar.mapColorForTab(3, "#7B1FA2");
+        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        mBottomBar.mapColorForTab(2, ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        mBottomBar.mapColorForTab(3, ContextCompat.getColor(this, R.color.colorPrimaryDark));
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -174,22 +175,6 @@ public class MainActivity extends AppCompatActivity {
         // Necessary to restore the BottomBar's state, otherwise we would
         // lose the current tab on orientation change.
         mBottomBar.onSaveInstanceState(outState);
-    }
-
-
-    private void addFlotingActionButton() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MyUser.getCurrentUser(MainActivity.this) == null) {
-                    MyUser.startLoginActivity(MainActivity.this);
-                } else {
-                    Intent intent = new Intent(MainActivity.this, PostActivityOne.class);
-                    startActivity(intent);
-                }
-            }
-        });
     }
 
 }

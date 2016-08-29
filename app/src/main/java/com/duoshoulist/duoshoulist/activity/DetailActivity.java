@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -34,6 +35,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +47,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.duoshoulist.duoshoulist.R;
@@ -61,6 +65,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.bingoogolapple.bgabanner.BGABanner;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -70,7 +75,7 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class DetailActivity extends AppCompatActivity implements View.OnClickListener, ImagesAdapter.OnImageClickListener {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String TAG = "DetailActivity";
 
@@ -81,11 +86,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     List<Comment> commentsData = new ArrayList<>();
     int commentCount;
 
+    BGABanner mCubeBanner;
     // Images Rec
 
     // 图 标题 描述
-    @Bind(R.id.detail_image)
-    ImageView imageView;
+//    @Bind(R.id.detail_image)
+//    ImageView imageView;
     @Bind(R.id.detail_title)
     TextView textView_title;
     @Bind(R.id.detail_desc)
@@ -165,7 +171,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         objectId = feedItem.getObjectId();
         likesCount = feedItem.getLikeCount();
         title = feedItem.getTitle();
@@ -181,10 +186,63 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         textView_desc.setText(desc);
         btn_like.setText(likesCount.toString());
 
+
+        setupBanner();
+        loadBackdrop();
         loadComments();
         initView();
-        loadBackdrop();
         setupMaterialDialog();
+
+
+    }
+
+    private void setupBanner() {
+
+        screenWidth = getScreenWidth(this);
+        screenHight = getScreenHeight(this);
+
+        mCubeBanner = (BGABanner)findViewById(R.id.banner_splash_pager);
+        List<ImageView> mCubeViews = new ArrayList<>();
+
+        ViewGroup.LayoutParams lp = mCubeBanner.getLayoutParams();
+        lp.width = screenWidth;
+        lp.height = screenWidth;
+
+        mCubeBanner.setLayoutParams(lp);
+
+        if (imagePaths != null) {
+            for (int i = 0; i < imagePaths.size(); i++) {
+                ImageView imageView = new ImageView(this);
+                imageView.setLayoutParams(lp);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mCubeViews.add(imageView);
+            }
+
+            for (int i = 0; i < imagePaths.size(); i++) {
+                ImageView imageView;
+                imageView = mCubeViews.get(i);
+                String imagePath = imagePaths.get(i).getUrl();
+                Glide.with(this).load(imagePath).crossFade().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(imageView);
+
+                // 为每一页添加点击事件
+                final int finalPosition = i;
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), "点击了第" + (finalPosition + 1) + "页", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            ImageView imageView = new ImageView(this);
+            imageView.setLayoutParams(lp);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mCubeViews.add(imageView);
+            Glide.with(this).load(image).crossFade().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(imageView);
+        }
+
+        mCubeBanner.setViews(mCubeViews);
+        // banner.setCurrentItem(1);
     }
 
     private void initView() {
@@ -225,7 +283,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         imageRecyclerView.setLayoutManager(imageLayoutManager);
 
         // Image RecyclerView Adapter
-        imageAdapter = new ImagesAdapter(DetailActivity.this, imagePaths, this);
+        imageAdapter = new ImagesAdapter(DetailActivity.this, imagePaths);
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.setNestedScrollingEnabled(false);
 
@@ -235,16 +293,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void loadBackdrop() {
-        Glide.with(this).load(image).crossFade(1500).into(imageView);
+//        Glide.with(this).load(image).crossFade(1500).into(imageView);
 
-        screenWidth = getScreenWidth(this);
-        screenHight = getScreenHeight(this);
 
-        ViewGroup.LayoutParams lp = imageView.getLayoutParams();
-        lp.width = screenWidth;
-        lp.height = screenWidth;
-
-        imageView.setLayoutParams(lp);
     }
 
     private void loadComments() {
@@ -443,11 +494,4 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         positiveAction.setEnabled(false); // disabled by default
     }
 
-    @Override
-    public void onImageClicked(View v) {
-        v.setDrawingCacheEnabled(true);
-        Bitmap bitmap= v.getDrawingCache(true);
-        imageView.setImageBitmap(bitmap);
-        Log.i(TAG, "onImageClick方法执行了");
-    }
 }

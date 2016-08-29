@@ -17,6 +17,7 @@
 package com.duoshoulist.duoshoulist.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,11 +36,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
 import com.duoshoulist.duoshoulist.R;
+import com.duoshoulist.duoshoulist.activity.PostActivityOne;
 import com.duoshoulist.duoshoulist.adapter.FeedAdapter;
 import com.duoshoulist.duoshoulist.bmob.FeedItem;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +56,7 @@ public class SelectedFragment extends Fragment {
 
     final String TAG = "SelectedFragment";
 
+    FloatingActionButton floatingActionButton;
     private static final int STATE_REFRESH = 0;// 下拉刷新
     private static final int STATE_MORE = 1;// 加载更多
     private int limit = 10;        // 每页的数据是10条
@@ -63,6 +69,8 @@ public class SelectedFragment extends Fragment {
     LinearLayoutManager mLayoutManager;
     FeedAdapter adapter;
     boolean isLoadingMore;
+
+
 
     Handler handler = new Handler();
 
@@ -99,8 +107,10 @@ public class SelectedFragment extends Fragment {
             }
         });
 
+        // Recycler View
         recyclerView = (RecyclerView) getView().findViewById(R.id.main_recycler_view);
         setupRecyclerView(recyclerView);
+        addFlotingActionButton();
         checkLaunchTime();
     }
 
@@ -208,5 +218,22 @@ public class SelectedFragment extends Fragment {
         });
     }
 
+    private void addFlotingActionButton() {
+        floatingActionButton = (FloatingActionButton) getView().findViewById(R.id.selected_fab);
+        floatingActionButton.attachToRecyclerView(recyclerView);
+        floatingActionButton.show(false);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MyUser.getCurrentUser(getContext()) == null) {
+                    MyUser.startLoginActivity(getContext());
+                } else {
+                    Intent intent = new Intent(getContext(), PostActivityOne.class);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
 
 }

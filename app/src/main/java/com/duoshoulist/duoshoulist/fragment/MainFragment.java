@@ -1,9 +1,11 @@
 package com.duoshoulist.duoshoulist.fragment;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.duoshoulist.duoshoulist.R;
+import com.duoshoulist.duoshoulist.activity.PostActivityOne;
 import com.duoshoulist.duoshoulist.adapter.MainFragmentAdapter;
+import com.duoshoulist.duoshoulist.bmob.MyUser;
 
 /**
  * Created by Dan on 2016-04-10.
@@ -40,6 +44,7 @@ public class MainFragment extends Fragment {
             tabLayout.setupWithViewPager(viewPager);
             Log.i(TAG, "viewPager != null的IF方法执行了");
         }
+
         return relativeLayout;
     }
 
@@ -50,4 +55,6 @@ public class MainFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
     }
+
+
 }
