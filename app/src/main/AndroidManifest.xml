@@ -89,7 +89,8 @@
             android:theme="@style/PhotoPickerTheme"
             android:configChanges="orientation|screenSize"/>
 
-        <activity android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
+        <activity
+            android:name="com.foamtrace.photopicker.PhotoPreviewActivity"
             android:theme="@style/PhotoPickerTheme"/>
 
     </application>
